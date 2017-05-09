@@ -1,16 +1,32 @@
 package com.andrewnitu.githubmarkdownviewer;
 
+import android.app.DownloadManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+
 
 public class MainActivity extends AppCompatActivity {
     String baseUrl = "https://api.github.com";
@@ -24,38 +40,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void httpRequest(String url) {
-        InputStream response;
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(this);
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        mTxtDisplay.setText("Response: " + response.toString());
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        Log.d("Received request", "Successful");
                     }
                 }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Connection", "Error connecting");
+            }
+        });
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
-
-                    }
-                });
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
     }
 
     public void retrieveRepos(View view) {
-        EditText usernameBox = (EditText)findViewById(R.id.editText);
+        Log.d("Button", "Submit pressed");
+        Toast.makeText(this, "Clicked on Button", Toast.LENGTH_LONG).show();
+
+        EditText usernameBox = (EditText) findViewById(R.id.editText);
 
         String requestUrl = baseUrl + "/users/" + usernameBox.getText() + "/repos";
 
         httpRequest(requestUrl);
     }
-
-    AsyncTask.execute(new Runnable() {
-        @Override
-        public void run() {
-            // All your networking logic
-            // should be here
-        }
-    });
 }
