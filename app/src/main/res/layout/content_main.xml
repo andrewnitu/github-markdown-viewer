@@ -19,11 +19,11 @@
         android:hint="@string/select_user"
         android:inputType="textPersonName"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/button"
+        app:layout_constraintRight_toLeftOf="@+id/submit"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/submit_text"
@@ -31,7 +31,8 @@
         android:layout_marginRight="16dp"
         android:layout_marginLeft="16dp"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/editText"/>
+        app:layout_constraintLeft_toRightOf="@+id/editText"
+        android:onClick="retrieveRepos"/>
 
     <ListView
         android:layout_width="wrap_content"
