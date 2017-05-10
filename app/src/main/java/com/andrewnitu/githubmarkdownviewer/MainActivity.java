@@ -48,8 +48,7 @@ public class MainActivity extends AppCompatActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        Log.d("Received request", "Successful");
+                        Log.d("Response", "Got response: " + response);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -63,13 +62,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void retrieveRepos(View view) {
-        Log.d("Button", "Submit pressed");
-        Toast.makeText(this, "Clicked on Button", Toast.LENGTH_LONG).show();
-
         EditText usernameBox = (EditText) findViewById(R.id.editText);
 
-        String requestUrl = baseUrl + "/users/" + usernameBox.getText() + "/repos";
+        String requestURL = baseUrl + "/users/" + usernameBox.getText() + "/repos";
 
-        httpRequest(requestUrl);
+        Log.d("Button", "Sending request " + requestURL);
+
+        httpRequest(requestURL);
     }
 }
