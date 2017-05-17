@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.andrewnitu.githubmarkdownviewer.R;
 import com.andrewnitu.githubmarkdownviewer.adapter.RepoListAdapter;
@@ -66,8 +67,6 @@ public class MainActivity extends AppCompatActivity {
                         repos.clear();
 
                         try {
-                            Log.e("Response", "Got response: " + response.toString(4));
-
                             int numExtracted = 0;
 
                             while (numExtracted < response.length()) {
@@ -84,7 +83,8 @@ public class MainActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("Connection", "Error connecting");
+                        Toast toast = Toast.makeText(getApplicationContext(), "Couldn't find that user!", Toast.LENGTH_LONG);
+                        toast.show();
                     }
                 });
 
