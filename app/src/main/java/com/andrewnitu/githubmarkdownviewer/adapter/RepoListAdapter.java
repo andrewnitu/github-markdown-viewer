@@ -16,7 +16,7 @@ import java.util.List;
  */
 
 public class RepoListAdapter extends RecyclerView.Adapter<RepoListAdapter.RepoViewHolder> {
-    List<Repo> repos;
+    private List<Repo> repos;
 
     public RepoListAdapter(List<Repo> repos){
         this.repos = repos;
@@ -29,9 +29,8 @@ public class RepoListAdapter extends RecyclerView.Adapter<RepoListAdapter.RepoVi
 
     @Override
     public RepoViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.activity_main, viewGroup, false);
-        RepoViewHolder viewHolder = new RepoViewHolder(v);
-        return viewHolder;
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item, viewGroup, false);
+        return new RepoViewHolder(v);
     }
 
     @Override
@@ -39,16 +38,11 @@ public class RepoListAdapter extends RecyclerView.Adapter<RepoListAdapter.RepoVi
         rvh.repoTitle.setText(repos.get(i).getName());
     }
 
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-    }
+    public class RepoViewHolder extends RecyclerView.ViewHolder {
+        protected TextView repoTitle;
+        protected TextView repoUrl;
 
-    public static class RepoViewHolder extends RecyclerView.ViewHolder {
-        TextView repoTitle;
-        TextView repoUrl;
-
-        RepoViewHolder(View itemView) {
+        public RepoViewHolder(View itemView) {
             super(itemView);
             repoTitle = (TextView)itemView.findViewById(R.id.repo_title);
         }
