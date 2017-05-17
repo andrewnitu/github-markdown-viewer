@@ -12,6 +12,7 @@ import android.widget.EditText;
 import com.andrewnitu.githubmarkdownviewer.R;
 import com.andrewnitu.githubmarkdownviewer.adapter.RepoListAdapter;
 import com.andrewnitu.githubmarkdownviewer.model.Repo;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -19,6 +20,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -27,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText usernameBox;
     private RecyclerView recyclerView;
+    private ArrayList<Repo> repos;
+    private RepoListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +38,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        repos = new ArrayList<Repo>();
+
+        usernameBox = (EditText) findViewById(R.id.edit_text);
+
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        //recyclerView.setHasFixedSize(true);
+
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(llm);
+
+        adapter = new RepoListAdapter(repos);
+        recyclerView.setAdapter(adapter);
     }
 
     public void httpRequest(String url) {
@@ -45,31 +63,36 @@ public class MainActivity extends AppCompatActivity {
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        Log.d("Response", "Got response: " + response);
+                        repos.clear();
+
+                        try {
+                            Log.e("Response", "Got response: " + response.toString(4));
+
+                            int numExtracted = 0;
+
+                            while (numExtracted < response.length()) {
+                                repos.add(new Repo(response.getJSONObject(numExtracted).getString("name"),
+                                        response.getJSONObject(numExtracted).getString("name")));
+                                numExtracted++;
+                            }
+                        } catch (JSONException e) {
+                        }
+
+                        adapter.notifyDataSetChanged();
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("Connection", "Error connecting");
-            }
-        });
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Connection", "Error connecting");
+                    }
+                });
 
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
 
     public void retrieveRepos(View view) {
-        ArrayList<Repo> repos = new ArrayList<Repo>();
-
-        usernameBox = (EditText) findViewById(R.id.editText);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(llm);
-
-        RepoListAdapter adapter = new RepoListAdapter(repos);
-        recyclerView.setAdapter(adapter);
-
         String requestURL = baseUrl + "/users/" + usernameBox.getText() + "/repos";
 
         Log.d("Button", "Sending request " + requestURL);
