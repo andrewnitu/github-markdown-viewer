@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
-    public void httpRequest(String url) {
+    public void repoRequest(String url, final String username) {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -70,7 +70,11 @@ public class MainActivity extends AppCompatActivity {
                             int numExtracted = 0;
 
                             while (numExtracted < response.length()) {
-                                repos.add(new Repo(response.getJSONObject(numExtracted).getString("name"),
+                                String repoName = response.getJSONObject(numExtracted).getString("name");
+
+                                String requestUrl = baseUrl + "/repos/" + username + "/" + repoName + "/contents";
+
+                                repos.add(new Repo(repoName,
                                         response.getJSONObject(numExtracted).getString("name")));
                                 numExtracted++;
                             }
@@ -92,11 +96,13 @@ public class MainActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
+    public void repoContainsMarkdown(String url) {
+
+    }
+
     public void retrieveRepos(View view) {
         String requestURL = baseUrl + "/users/" + usernameBox.getText() + "/repos";
 
-        Log.d("Button", "Sending request " + requestURL);
-
-        httpRequest(requestURL);
+        repoRequest(requestURL, usernameBox.getText().toString());
     }
 }
