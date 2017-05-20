@@ -55,25 +55,34 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
-    public void repoRequest(String url, final String username) {
+    public void repoRequest(final String username) {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
 
+        // Create the URL to request the repositories for a user
+        String requestURL = baseUrl + "/users/" + username + "/repos";
+
         // Request a string response from the provided URL.
-        JsonArrayRequest stringRequest = new JsonArrayRequest(url,
+        JsonArrayRequest stringRequest = new JsonArrayRequest(requestURL,
                 new Response.Listener<JSONArray>() {
+                    // Do on a successful request
                     @Override
                     public void onResponse(JSONArray response) {
+                        // If successful, clear the current repo list to make way for the new one
                         repos.clear();
 
                         try {
                             int numExtracted = 0;
 
+                            // For each repo
                             while (numExtracted < response.length()) {
+                                // Retrieve the name
                                 String repoName = response.getJSONObject(numExtracted).getString("name");
 
+                                // Create the request URL based on the username and reponame
                                 String requestUrl = baseUrl + "/repos/" + username + "/" + repoName + "/contents";
 
+                                // TODO: Add some second useful field for a repo
                                 repos.add(new Repo(repoName,
                                         response.getJSONObject(numExtracted).getString("name")));
                                 numExtracted++;
@@ -81,7 +90,39 @@ public class MainActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                         }
 
+                        // Update the RecyclerView (don't wait for the user to)
                         adapter.notifyDataSetChanged();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Give an error!
+                        Toast toast = Toast.makeText(getApplicationContext(), "Couldn't find that user!", Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+    public ArrayList<Repo> repoContainsMarkdown(String username, String reponame) {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        // Create the URL to request the contents for a specific repo
+        String requestURL = baseUrl + "/repos/" + username + "/" + reponame;
+
+        // Request a string response from the provided URL.
+        JsonArrayRequest stringRequest = new JsonArrayRequest(url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+
+                        } catch (JSONException e) {
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -96,13 +137,7 @@ public class MainActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-    public void repoContainsMarkdown(String url) {
-
-    }
-
     public void retrieveRepos(View view) {
-        String requestURL = baseUrl + "/users/" + usernameBox.getText() + "/repos";
-
-        repoRequest(requestURL, usernameBox.getText().toString());
+        repoRequest(usernameBox.getText().toString());
     }
 }
