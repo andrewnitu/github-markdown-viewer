@@ -3,6 +3,7 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="64dp"
+    android:background="@drawable/custom_bg"
     android:padding="16dp">
 
     <TextView
