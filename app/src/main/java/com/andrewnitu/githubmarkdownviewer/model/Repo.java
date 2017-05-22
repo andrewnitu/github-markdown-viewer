@@ -6,14 +6,18 @@ package com.andrewnitu.githubmarkdownviewer.model;
 
 public class Repo {
     String name;
-    String url;
+    String path; // Format as path with leading slash but no trailing
 
-    public Repo (String name, String url) {
+    public Repo (String name, String path) {
         this.name = name;
-        this.url = url;
+        this.path = path;
     }
 
     public String getName(){
         return name;
+    }
+
+    public String getPath(){
+        return path;
     }
 }
