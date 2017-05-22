@@ -18,6 +18,8 @@ import java.util.List;
 public class RepoListAdapter extends RecyclerView.Adapter<RepoListAdapter.RepoViewHolder> {
     private List<Repo> repos;
 
+    private TouchListener touchListener = null;
+
     public RepoListAdapter(List<Repo> repos){
         this.repos = repos;
     }
@@ -29,7 +31,7 @@ public class RepoListAdapter extends RecyclerView.Adapter<RepoListAdapter.RepoVi
 
     @Override
     public RepoViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_repo, viewGroup, false);
         return new RepoViewHolder(v);
     }
 
@@ -38,13 +40,26 @@ public class RepoListAdapter extends RecyclerView.Adapter<RepoListAdapter.RepoVi
         rvh.repoTitle.setText(repos.get(i).getName());
     }
 
-    public class RepoViewHolder extends RecyclerView.ViewHolder {
+    public class RepoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         protected TextView repoTitle;
         protected TextView repoUrl;
+        private TouchListener clicklistener = null;
 
         public RepoViewHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
             repoTitle = (TextView)itemView.findViewById(R.id.repo_title);
         }
+
+        @Override
+        public void onClick(View v) {
+            if (clicklistener != null) {
+                clicklistener.itemClicked(v, getAdapterPosition());
+            }
+        }
+    }
+
+    public void setTouchListener(TouchListener touchListener) {
+        this.touchListener = touchListener;
     }
 }
