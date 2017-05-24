@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -79,10 +80,7 @@ public class MainActivity extends AppCompatActivity {
                                 // Retrieve the name
                                 String repoName = response.getJSONObject(numExtracted).getString("name");
 
-                                // Create the request URL based on the username and reponame
-                                String requestUrl = baseUrl + "/repos/" + username + "/" + repoName + "/contents";
-
-                                // TODO: Add some second useful field for a repo
+                                // TODO: Add the URL property
                                 repos.add(new Repo(repoName,
                                         response.getJSONObject(numExtracted).getString("name")));
                                 numExtracted++;
@@ -107,37 +105,13 @@ public class MainActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-    public ArrayList<Repo> repoContainsMarkdown(String username, String reponame) {
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        // Create the URL to request the contents for a specific repo
-        String requestURL = baseUrl + "/repos/" + username + "/" + reponame;
-
-        // Request a string response from the provided URL.
-        JsonArrayRequest stringRequest = new JsonArrayRequest(url,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-
-                        } catch (JSONException e) {
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast toast = Toast.makeText(getApplicationContext(), "Couldn't find that user!", Toast.LENGTH_LONG);
-                        toast.show();
-                    }
-                });
-
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-    }
-
     public void retrieveRepos(View view) {
+        // Check if no view has focus:
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(this.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+
         repoRequest(usernameBox.getText().toString());
     }
 }
