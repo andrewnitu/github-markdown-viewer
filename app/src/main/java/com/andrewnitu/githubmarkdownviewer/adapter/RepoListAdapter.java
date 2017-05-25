@@ -1,6 +1,7 @@
 package com.andrewnitu.githubmarkdownviewer.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,12 +39,12 @@ public class RepoListAdapter extends RecyclerView.Adapter<RepoListAdapter.RepoVi
     @Override
     public void onBindViewHolder(RepoViewHolder rvh, int i) {
         rvh.repoTitle.setText(repos.get(i).getName());
+
     }
 
     public class RepoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         protected TextView repoTitle;
         protected TextView repoUrl;
-        private TouchListener clicklistener = null;
 
         public RepoViewHolder(View itemView) {
             super(itemView);
@@ -53,8 +54,8 @@ public class RepoListAdapter extends RecyclerView.Adapter<RepoListAdapter.RepoVi
 
         @Override
         public void onClick(View v) {
-            if (clicklistener != null) {
-                clicklistener.itemClicked(v, getAdapterPosition());
+            if (touchListener != null) {
+                touchListener.itemClicked(v, getAdapterPosition());
             }
         }
     }

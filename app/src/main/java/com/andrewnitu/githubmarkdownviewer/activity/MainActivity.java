@@ -1,5 +1,6 @@
 package com.andrewnitu.githubmarkdownviewer.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import com.andrewnitu.githubmarkdownviewer.R;
 import com.andrewnitu.githubmarkdownviewer.adapter.RepoListAdapter;
+import com.andrewnitu.githubmarkdownviewer.adapter.TouchListener;
 import com.andrewnitu.githubmarkdownviewer.model.Repo;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -26,7 +28,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TouchListener {
     String baseUrl = "https://api.github.com";
 
     private EditText usernameBox;
@@ -54,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new RepoListAdapter(repos);
         recyclerView.setAdapter(adapter);
+
+        adapter.setTouchListener(this);
     }
 
     public void repoRequest(final String username) {
@@ -98,6 +102,8 @@ public class MainActivity extends AppCompatActivity {
                         // Give an error!
                         Toast toast = Toast.makeText(getApplicationContext(), "Couldn't find that user!", Toast.LENGTH_LONG);
                         toast.show();
+
+                        usernameBox.setText("");
                     }
                 });
 
@@ -113,5 +119,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         repoRequest(usernameBox.getText().toString());
+    }
+
+    @Override
+    public void itemClicked(View view, int position) {
+        Intent intent = new Intent(this, RepoActivity.class);
+        intent.putExtra("ItemPosition" ,position);
+
+        startActivity(intent);
     }
 }
