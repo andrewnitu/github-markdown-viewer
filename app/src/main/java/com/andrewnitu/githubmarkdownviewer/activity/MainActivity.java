@@ -3,10 +3,10 @@ package com.andrewnitu.githubmarkdownviewer.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -16,7 +16,6 @@ import com.andrewnitu.githubmarkdownviewer.R;
 import com.andrewnitu.githubmarkdownviewer.adapter.RepoListAdapter;
 import com.andrewnitu.githubmarkdownviewer.adapter.TouchListener;
 import com.andrewnitu.githubmarkdownviewer.model.Repo;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -35,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements TouchListener {
     private RecyclerView recyclerView;
     private ArrayList<Repo> repos;
     private RepoListAdapter adapter;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +48,14 @@ public class MainActivity extends AppCompatActivity implements TouchListener {
         usernameBox = (EditText) findViewById(R.id.edit_text);
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        //recyclerView.setHasFixedSize(true);
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
+
+        DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                llm.getOrientation());
+        recyclerView.addItemDecoration(mDividerItemDecoration);
 
         adapter = new RepoListAdapter(repos);
         recyclerView.setAdapter(adapter);
@@ -60,14 +63,14 @@ public class MainActivity extends AppCompatActivity implements TouchListener {
         adapter.setTouchListener(this);
     }
 
-    public void repoRequest(final String username) {
-        // Instantiate the RequestQueue.
+    public void repoRequest(final String reqUsername) {
+        // Instantiate the RequestQueue
         RequestQueue queue = Volley.newRequestQueue(this);
 
         // Create the URL to request the repositories for a user
-        String requestURL = baseUrl + "/users/" + username + "/repos";
+        String requestURL = baseUrl + "/users/" + reqUsername + "/repos";
 
-        // Request a string response from the provided URL.
+        // Request a string response from the provided URL
         JsonArrayRequest stringRequest = new JsonArrayRequest(requestURL,
                 new Response.Listener<JSONArray>() {
                     // Do on a successful request
@@ -75,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements TouchListener {
                     public void onResponse(JSONArray response) {
                         // If successful, clear the current repo list to make way for the new one
                         repos.clear();
+                        username = reqUsername;
 
                         try {
                             int numExtracted = 0;
@@ -122,9 +126,10 @@ public class MainActivity extends AppCompatActivity implements TouchListener {
     }
 
     @Override
-    public void itemClicked(View view, int position) {
+    public void itemClicked(View view, int index) {
         Intent intent = new Intent(this, RepoActivity.class);
-        intent.putExtra("ItemPosition" ,position);
+        intent.putExtra("Username", username);
+        intent.putExtra("Reponame", repos.get(index).getName());
 
         startActivity(intent);
     }
