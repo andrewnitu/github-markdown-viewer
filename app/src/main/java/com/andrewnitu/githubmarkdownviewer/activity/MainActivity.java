@@ -28,7 +28,7 @@ import org.json.JSONException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements TouchListener {
-    String baseUrl = "https://api.github.com";
+    final String baseUrl = "https://api.github.com";
 
     private EditText usernameBox;
     private RecyclerView recyclerView;
