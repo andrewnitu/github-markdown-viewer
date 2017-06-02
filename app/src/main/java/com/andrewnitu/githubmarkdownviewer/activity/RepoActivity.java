@@ -28,6 +28,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class RepoActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     final String baseUrl = "https://api.github.com";
@@ -42,6 +43,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
     private RepoListAdapter adapter;
     private ArrayList<String> branches;
     private ArrayAdapter<String> dataAdapter;
+    private Spinner branchPicker;
 
     @Override // from AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +58,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         reponameText = (TextView) findViewById(R.id.reponame);
 
         // Bind the spinner and set listener
-        Spinner branchPicker = (Spinner) findViewById(R.id.branch_picker);
+        branchPicker = (Spinner) findViewById(R.id.branch_picker);
         branchPicker.setOnItemSelectedListener(this);
 
         // Retrieve passed data from home activity
@@ -68,9 +70,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         usernameText.setText(username);
         reponameText.setText(reponame);
 
-        // Pull the list of branches to populate the spinner with
-        branchesRequest(username, reponame);
-
+        // Initialize the adapter for the spinner
         dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, branches);
 
         // Drop down layout style - list view with radio button
@@ -79,6 +79,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         // attaching data adapter to spinner
         branchPicker.setAdapter(dataAdapter);
 
+        // Pull the list of branches to populate the spinner
         branchesRequest(username, reponame);
     }
 
@@ -119,6 +120,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
                     // Do on a successful request
                     @Override
                     public void onResponse(JSONArray response) {
+                        Boolean hasMaster = false;
                         try {
                             int numExtracted = 0;
 
@@ -127,21 +129,30 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
                                 // Retrieve the name
                                 String branchName = response.getJSONObject(numExtracted).getString("name");
 
-                                branches.add(branchName);
+                                if (branchName.equals("master")) {
+                                    hasMaster = true;
+                                }
+                                else {
+                                    branches.add(branchName);
+                                }
                                 numExtracted++;
                             }
                         } catch (JSONException e) {
                         }
 
-                        dataAdapter.clear();
-                        dataAdapter.addAll(branches);
+                        Collections.sort(branches);
+
+                        if (hasMaster) {
+                            branches.add(0, "master");
+                        }
+
                         dataAdapter.notifyDataSetChanged();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast toast = Toast.makeText(getApplicationContext(), "Couldn't find that user or repo!", Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(getApplicationContext(), "Couldn't find branches!", Toast.LENGTH_LONG);
                         toast.show();
                     }
                 });
@@ -175,7 +186,6 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
                                 // Retrieve the name
                                 String repoName = response.getJSONObject(numExtracted).getString("name");
 
-                                // TODO: Add the URL property
                                 repos.add(new Repo(repoName,
                                         response.getJSONObject(numExtracted).getString("name")));
                                 numExtracted++;
