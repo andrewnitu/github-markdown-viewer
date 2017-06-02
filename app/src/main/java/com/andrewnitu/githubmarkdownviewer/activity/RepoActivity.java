@@ -129,6 +129,8 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
                                 // Retrieve the name
                                 String branchName = response.getJSONObject(numExtracted).getString("name");
 
+                                // Add the current branch to the list if it's NOT master,
+                                // if it IS master remember that master exists and don't add it
                                 if (branchName.equals("master")) {
                                     hasMaster = true;
                                 }
@@ -140,8 +142,10 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
                         } catch (JSONException e) {
                         }
 
+                        // Sort the list of branches WITHOUT master
                         Collections.sort(branches);
 
+                        // If the repo has master, add master to the beginning of the list so it shows first
                         if (hasMaster) {
                             branches.add(0, "master");
                         }
