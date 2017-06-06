@@ -3,7 +3,10 @@ package com.andrewnitu.githubmarkdownviewer.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.Touch;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,22 +18,28 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.andrewnitu.githubmarkdownviewer.R;
+import com.andrewnitu.githubmarkdownviewer.adapter.FileListAdapter;
 import com.andrewnitu.githubmarkdownviewer.adapter.RepoListAdapter;
+import com.andrewnitu.githubmarkdownviewer.adapter.TouchListener;
 import com.andrewnitu.githubmarkdownviewer.model.Branch;
+import com.andrewnitu.githubmarkdownviewer.model.File;
 import com.andrewnitu.githubmarkdownviewer.model.Repo;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class RepoActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class RepoActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, TouchListener {
     final String baseUrl = "https://api.github.com";
 
     TextView usernameText;
@@ -39,9 +48,9 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
     String reponame;
 
     private RecyclerView recyclerView;
-    private ArrayList<Repo> repos;
-    private RepoListAdapter adapter;
+    private FileListAdapter adapter;
     private ArrayList<String> branches;
+    private ArrayList<File> files;
     private ArrayAdapter<String> dataAdapter;
     private Spinner branchPicker;
 
@@ -81,6 +90,21 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
 
         // Pull the list of branches to populate the spinner
         branchesRequest(username, reponame);
+
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(llm);
+
+        DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                llm.getOrientation());
+        recyclerView.addItemDecoration(mDividerItemDecoration);
+
+        adapter = new FileListAdapter(files);
+        recyclerView.setAdapter(adapter);
+
+        adapter.setTouchListener(this);
     }
 
     @Override // from AppCompatActivity
@@ -93,13 +117,19 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         return super.onOptionsItemSelected(item);
     }
 
+    @Override // from TouchListener
+    public void itemClicked(View view, int index) {
+        //Intent intent = new Intent(this, RepoActivity.class);
+        //intent.putExtra("Username", username);
+        //intent.putExtra("Reponame", repos.get(index).getName());
+
+        //startActivity(intent);
+    }
+
     @Override // from AdapterView.OnItemSelectedListener
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         // On selecting a spinner item
-        String item = parent.getItemAtPosition(position).toString();
-
-        // Showing selected spinner item
-        Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
+        String branchName = parent.getItemAtPosition(position).toString();
     }
 
     @Override // from AdapterView.OnItemSelectedListener
@@ -156,7 +186,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast toast = Toast.makeText(getApplicationContext(), "Couldn't find branches!", Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(getApplicationContext(), "Couldn't get branches!", Toast.LENGTH_LONG);
                         toast.show();
                     }
                 });
@@ -165,47 +195,39 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         queue.add(stringRequest);
     }
 
-    public void contentsRequest(final String reqUsername, final String reqReponame, final String reqBranchname) {
+    public void filesRequest(final String reqUserName, final String reqRepoName, final String reqBranchName) {
         // Instantiate the RequestQueue
         RequestQueue queue = Volley.newRequestQueue(this);
 
         // Create the URL to request the repositories for a user
-        String requestURL = baseUrl + "/users/" + reqUsername + "/repos";
+        String requestURL = baseUrl + "/repos/" + reqUserName + "/" + reqRepoName + "/git/trees/" + reqBranchName + "?recursive=1";
 
         // Request a string response from the provided URL
-        JsonArrayRequest stringRequest = new JsonArrayRequest(requestURL,
-                new Response.Listener<JSONArray>() {
+        JsonObjectRequest stringRequest = new JsonObjectRequest(requestURL, null,
+                new Response.Listener<JSONObject>() {
                     // Do on a successful request
                     @Override
-                    public void onResponse(JSONArray response) {
-                        // If successful, clear the current repo list to make way for the new one
-                        repos.clear();
-                        username = reqUsername;
-
+                    public void onResponse(JSONObject response) {
                         try {
+                            JSONArray tree = response.getJSONArray("tree");
+
                             int numExtracted = 0;
 
-                            // For each repo
+                            // For each file
                             while (numExtracted < response.length()) {
                                 // Retrieve the name
-                                String repoName = response.getJSONObject(numExtracted).getString("name");
+                                String path = tree.getJSONObject(numExtracted).getString("path");
 
-                                repos.add(new Repo(repoName,
-                                        response.getJSONObject(numExtracted).getString("name")));
-                                numExtracted++;
+                                files.add(new File());
                             }
                         } catch (JSONException e) {
                         }
-
-                        // Update the RecyclerView (don't wait for the user to)
-                        adapter.notifyDataSetChanged();
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // Give an error!
-                        Toast toast = Toast.makeText(getApplicationContext(), "Couldn't find that user!", Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(getApplicationContext(), "Couldn't find branches!", Toast.LENGTH_LONG);
                         toast.show();
                     }
                 });
