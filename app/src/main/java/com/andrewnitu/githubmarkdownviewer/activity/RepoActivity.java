@@ -61,6 +61,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
 
         // Initialize the arraylist
         branches = new ArrayList<String>();
+        files = new ArrayList<File>();
 
         // Bind the text fields
         usernameText = (TextView) findViewById(R.id.username);
@@ -130,6 +131,10 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         // On selecting a spinner item
         String branchName = parent.getItemAtPosition(position).toString();
+
+        Log.e("WTF", "WTF " + branchName);
+
+        filesRequest(username, reponame, branchName);
     }
 
     @Override // from AdapterView.OnItemSelectedListener
@@ -209,19 +214,27 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
+                            Log.e("Test", response.toString(4));
+
                             JSONArray tree = response.getJSONArray("tree");
 
                             int numExtracted = 0;
 
                             // For each file
-                            while (numExtracted < response.length()) {
+                            while (numExtracted < tree.length()) {
                                 // Retrieve the name
                                 String path = tree.getJSONObject(numExtracted).getString("path");
 
-                                files.add(new File());
+                                // TODO: Add useful second parameter
+                                files.add(new File(path, path));
+
+                                numExtracted++;
                             }
                         } catch (JSONException e) {
                         }
+
+                        // Update the RecyclerView (don't wait for the user to)
+                        adapter.notifyDataSetChanged();
                     }
                 },
                 new Response.ErrorListener() {
