@@ -11,6 +11,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -20,6 +21,8 @@ import com.andrewnitu.githubmarkdownviewer.R;
 import com.andrewnitu.githubmarkdownviewer.adapter.RepoListAdapter;
 import com.andrewnitu.githubmarkdownviewer.adapter.TouchListener;
 import com.andrewnitu.githubmarkdownviewer.model.Repo;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -28,6 +31,9 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ViewActivity extends AppCompatActivity implements TouchListener {
     final String baseUrl = "https://api.github.com";
@@ -48,15 +54,15 @@ public class ViewActivity extends AppCompatActivity implements TouchListener {
         String requestURL = baseUrl + "/users/" + reqUsername + "/repos";
 
         // Request a string response from the provided URL
-        JsonArrayRequest stringRequest = new JsonArrayRequest(requestURL,
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, requestURL,
                 new Response.Listener<JSONArray>() {
                     // Do on a successful request
                     @Override
                     public void onResponse(JSONArray response) {
-                        try {
-
-                        } catch (JSONException e) {
-                        }
+                        Log.e(response.toString());
+                        //try {
+                        //                      } catch (JSONException e) {
+                        //                    }
                     }
                 },
                 new Response.ErrorListener() {
@@ -66,10 +72,18 @@ public class ViewActivity extends AppCompatActivity implements TouchListener {
                         Toast toast = Toast.makeText(getApplicationContext(), "Couldn't obtain that file!", Toast.LENGTH_LONG);
                         toast.show();
                     }
-                });
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Accept", "application/vnd.github.VERSION.html");
+
+                return params;
+            }
+        };
 
         // Add the request to the RequestQueue
-        queue.add(stringRequest);
+        queue.add(jsonArrayRequest);
     }
 
     @Override
