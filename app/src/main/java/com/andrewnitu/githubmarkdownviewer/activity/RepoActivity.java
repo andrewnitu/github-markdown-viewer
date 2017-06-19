@@ -46,6 +46,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
     TextView reponameText;
     String username;
     String reponame;
+    String branchname;
 
     private RecyclerView recyclerView;
     private FileListAdapter adapter;
@@ -59,7 +60,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_repo);
 
-        // Initialize the arraylist
+        // Initialize the ArrayList
         branches = new ArrayList<String>();
         files = new ArrayList<File>();
 
@@ -98,6 +99,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
 
+        // Add the list separator
         DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 llm.getOrientation());
         recyclerView.addItemDecoration(mDividerItemDecoration);
@@ -110,6 +112,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override // from AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Magic from StackOverflow
         switch ( item.getItemId() ) {
             case android.R.id.home:
                 finish();
@@ -120,26 +123,31 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override // from TouchListener
     public void itemClicked(View view, int index) {
-        //Intent intent = new Intent(this, RepoActivity.class);
-        //intent.putExtra("Username", username);
-        //intent.putExtra("Reponame", repos.get(index).getName());
+        Intent intent = new Intent(this, ViewActivity.class);
 
-        //startActivity(intent);
+        // Attach the username, reponame, and file path within that repo to the intent
+        intent.putExtra("Username", username);
+        intent.putExtra("Reponame", reponame);
+        intent.putExtra("Branchname", branchname);
+        intent.putExtra("Filepath", files.get(index).getPath());
+
+        // Start the intent
+        startActivity(intent);
     }
 
     @Override // from AdapterView.OnItemSelectedListener
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         // On selecting a spinner item
-        String branchName = parent.getItemAtPosition(position).toString();
+        branchname = parent.getItemAtPosition(position).toString();
 
-        Log.e("WTF", "WTF " + branchName);
+        Log.e("WTF", "WTF " + branchname);
 
-        filesRequest(username, reponame, branchName);
+        filesListRequest(username, reponame, branchname);
     }
 
     @Override // from AdapterView.OnItemSelectedListener
     public void onNothingSelected(AdapterView<?> arg0) {
-        // TODO Auto-generated method stub
+        // TODO Fill out?
     }
 
     public void branchesRequest(final String reqUserName, final String reqRepoName) {
@@ -200,7 +208,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         queue.add(stringRequest);
     }
 
-    public void filesRequest(final String reqUserName, final String reqRepoName, final String reqBranchName) {
+    public void filesListRequest(final String reqUserName, final String reqRepoName, final String reqBranchName) {
         // Instantiate the RequestQueue
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -214,8 +222,6 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            Log.e("Test", response.toString(4));
-
                             JSONArray tree = response.getJSONArray("tree");
 
                             int numExtracted = 0;
@@ -225,7 +231,8 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
                                 // Retrieve the name
                                 String path = tree.getJSONObject(numExtracted).getString("path");
 
-                                // TODO: Add useful second parameter
+                                // Add a new file to the list with the appropriate parameters
+                                // TODO Finalize these parameters
                                 files.add(new File(path, path));
 
                                 numExtracted++;
