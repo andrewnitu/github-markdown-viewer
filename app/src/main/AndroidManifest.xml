@@ -27,6 +27,12 @@
             android:label="@string/app_name"
             android:parentActivityName=".activity.MainActivity">
         </activity>
+
+        <activity
+            android:name=".activity.ViewActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".activity.RepoActivity">
+        </activity>
     </application>
 
 </manifest>
