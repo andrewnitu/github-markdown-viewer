@@ -8,6 +8,18 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.andrewnitu.githubmarkdownviewer.activity.RepoActivity">
 
+    <RelativeLayout
+        android:id="@+id/loading_panel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" >
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+    </RelativeLayout>
+
     <TextView
         android:id="@+id/username"
         android:layout_width="0dp"
