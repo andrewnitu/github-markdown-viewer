@@ -39,7 +39,6 @@ public class RepoListAdapter extends RecyclerView.Adapter<RepoListAdapter.RepoVi
     @Override
     public void onBindViewHolder(RepoViewHolder rvh, int i) {
         rvh.repoTitle.setText(repos.get(i).getName());
-
     }
 
     public class RepoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
