@@ -12,8 +12,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -40,10 +42,13 @@ import java.util.Map;
 
 public class ViewActivity extends AppCompatActivity implements TouchListener {
     final String baseUrl = "https://api.github.com";
+    final String mimeType = "text/html";
+    final String encoding = "UTF-8";
     String username;
     String reponame;
     String filepath;
     String branchname;
+    WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +61,22 @@ public class ViewActivity extends AppCompatActivity implements TouchListener {
         filepath = intent.getStringExtra("Filepath");
         branchname = intent.getStringExtra("Branchname");
 
+        webView = (WebView) findViewById(R.id.web_view);
+        //webView.getSettings().setLoadWithOverviewMode(true);
+        //webView.getSettings().setUseWideViewPort(true);
+
         fileRequest(username, reponame, filepath, branchname);
+    }
+
+    @Override // from AppCompatActivity
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Magic from StackOverflow
+        switch ( item.getItemId() ) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void fileRequest(final String reqUsername, final String reqReponame, final String reqFilepath, final String reqBranchname) {
@@ -72,7 +92,8 @@ public class ViewActivity extends AppCompatActivity implements TouchListener {
                     // Do on a successful request
                     @Override
                     public void onResponse(String response) {
-                        Log.e("SUCCESS", response);
+                        Log.e("SUCCESS", "Response:" + response);
+                        webView.loadDataWithBaseURL("", response, mimeType, encoding, "");
                     }
                 },
                 new Response.ErrorListener() {
