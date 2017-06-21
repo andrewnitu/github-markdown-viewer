@@ -60,6 +60,8 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_repo);
 
+        findViewById(R.id.loading_panel).setVisibility(View.GONE);
+
         // Initialize the ArrayList
         branches = new ArrayList<String>();
         files = new ArrayList<File>();
@@ -140,7 +142,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         // On selecting a spinner item
         branchname = parent.getItemAtPosition(position).toString();
 
-        Log.e("WTF", "WTF " + branchname);
+        findViewById(R.id.loading_panel).setVisibility(View.VISIBLE);
 
         filesListRequest(username, reponame, branchname);
     }
@@ -242,6 +244,8 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
 
                         // Update the RecyclerView (don't wait for the user to)
                         adapter.notifyDataSetChanged();
+
+                        findViewById(R.id.loading_panel).setVisibility(View.GONE);
                     }
                 },
                 new Response.ErrorListener() {

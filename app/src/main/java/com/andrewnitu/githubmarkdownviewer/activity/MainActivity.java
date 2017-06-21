@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements TouchListener {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        findViewById(R.id.loading_panel).setVisibility(View.GONE);
+
         repos = new ArrayList<Repo>();
 
         usernameBox = (EditText) findViewById(R.id.edit_text);
@@ -96,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements TouchListener {
                         } catch (JSONException e) {
                         }
 
+                        findViewById(R.id.loading_panel).setVisibility(View.GONE);
+
                         // Update the RecyclerView (don't wait for the user to)
                         adapter.notifyDataSetChanged();
                     }
@@ -103,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements TouchListener {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        findViewById(R.id.loading_panel).setVisibility(View.GONE);
+
                         // Give an error!
                         Toast toast = Toast.makeText(getApplicationContext(), "Couldn't find that user!", Toast.LENGTH_LONG);
                         toast.show();
@@ -116,11 +122,13 @@ public class MainActivity extends AppCompatActivity implements TouchListener {
     }
 
     public void retrieveRepos(View view) {
-        // Check if no view has focus:
+        // Close the keyboard (using magic)
         if (view != null) {
             InputMethodManager imm = (InputMethodManager)getSystemService(this.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+
+        findViewById(R.id.loading_panel).setVisibility(View.VISIBLE);
 
         repoRequest(usernameBox.getText().toString());
     }

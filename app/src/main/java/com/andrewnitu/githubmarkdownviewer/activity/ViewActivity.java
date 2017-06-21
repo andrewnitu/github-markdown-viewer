@@ -92,16 +92,13 @@ public class ViewActivity extends AppCompatActivity implements TouchListener {
                     // Do on a successful request
                     @Override
                     public void onResponse(String response) {
-                        Log.e("SUCCESS", "Response:" + response);
                         webView.loadDataWithBaseURL("", response, mimeType, encoding, "");
+                        findViewById(R.id.loading_panel).setVisibility(View.GONE);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // Give an error!
-                        Log.e("FAILURE", "At URL: " + requestURL);
-
                         Toast toast = Toast.makeText(getApplicationContext(), "Couldn't obtain that file!", Toast.LENGTH_LONG);
                         toast.show();
                     }
