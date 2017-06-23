@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.andrewnitu.githubmarkdownviewer.activity.MainActivity"
-    tools:showIn="@layout/activity_main">
+    tools:context="com.andrewnitu.githubmarkdownviewer.fragment.UserSelectFragment"
+    tools:showIn="@layout/fragment_user_select">
 
     <EditText
         android:id="@+id/edit_text"
