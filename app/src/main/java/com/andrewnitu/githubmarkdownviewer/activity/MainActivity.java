@@ -1,5 +1,6 @@
 package com.andrewnitu.githubmarkdownviewer.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,7 +25,6 @@ import com.andrewnitu.githubmarkdownviewer.fragment.UserSelectFragment;
 import static com.andrewnitu.githubmarkdownviewer.R.id.toolbar;
 
 public class MainActivity extends AppCompatActivity {
-
     public static int navItemIndex = 0;
     NavigationView navigationView;
     DrawerLayout drawer;

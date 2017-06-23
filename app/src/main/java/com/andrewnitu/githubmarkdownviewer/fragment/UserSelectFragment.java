@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -57,6 +58,15 @@ public class UserSelectFragment extends Fragment implements TouchListener {
         usernameBox = (EditText) rootView.findViewById(R.id.edit_text);
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+
+        View.OnClickListener btnSubmitClickListener = new View.OnClickListener() {
+            public void onClick(View v) {
+                retrieveRepos(v);
+            }
+        };
+
+        Button btnSubmit = (Button) rootView.findViewById(R.id.submit);
+        btnSubmit.setOnClickListener(btnSubmitClickListener);
 
         LinearLayoutManager llm = new LinearLayoutManager(this.getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
