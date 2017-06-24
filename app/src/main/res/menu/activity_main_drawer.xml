@@ -4,28 +4,24 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_browse"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_nav_browse"
             android:title="Browse" />
         <item
             android:id="@+id/nav_saved"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_nav_saved"
             android:title="Saved" />
-        <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Settings" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Extras">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_nav_settings"
+                android:title="Settings" />
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_nav_about"
+                android:title="About" />
         </menu>
     </item>
 
