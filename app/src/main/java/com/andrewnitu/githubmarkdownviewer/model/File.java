@@ -1,9 +1,10 @@
 package com.andrewnitu.githubmarkdownviewer.model;
 
 /**
- * Created by Andrew Nitu on 6/5/2017.
+ * Data class to represent a GitHub File (inside a Repo, on a Branch)
+ *
+ * @author Andrew Nitu
  */
-
 public class File {
     String name;
     String path;

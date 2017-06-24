@@ -1,9 +1,10 @@
 package com.andrewnitu.githubmarkdownviewer.model;
 
 /**
- * Created by Andrew Nitu on 5/15/2017.
+ * Data class to represent a GitHub Repo
+ *
+ * @author Andrew Nitu
  */
-
 public class Repo {
     String name;
     String path; // Format as path with leading slash but no trailing
