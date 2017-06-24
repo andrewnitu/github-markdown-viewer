@@ -2,6 +2,7 @@ package com.andrewnitu.githubmarkdownviewer.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -24,7 +25,7 @@ import com.andrewnitu.githubmarkdownviewer.fragment.UserSelectFragment;
 
 import static com.andrewnitu.githubmarkdownviewer.R.id.toolbar;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
     public static int navItemIndex = 0;
     NavigationView navigationView;
     DrawerLayout drawer;
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
+    @Override // from TODO
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawers();
@@ -86,10 +87,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    @Override
+    @Override // from TODO
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        //getMenuInflater().inflate(R.menu.action_bar, menu);
         return true;
     }
 
@@ -171,6 +172,10 @@ public class MainActivity extends AppCompatActivity {
                         //startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                         //drawer.closeDrawers();
                         //return true;
+                    case R.id.nav_about:
+                        //startActivity(new Intent(MainActivity.this, AboutActivity.class));
+                        //drawer.closeDrawers();
+                        //return true;
                     default:
                         navItemIndex = 0;
                 }
@@ -190,13 +195,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
-            @Override
+            @Override // from TODO
             public void onDrawerClosed(View drawerView) {
                 // Code here will be triggered once the drawer closes as we don't want anything to happen so we leave this blank
                 super.onDrawerClosed(drawerView);
             }
 
-            @Override
+            @Override // from TODO
             public void onDrawerOpened(View drawerView) {
                 // Code here will be triggered once the drawer open as we don't want anything to happen so we leave this blank
                 super.onDrawerOpened(drawerView);
@@ -211,14 +216,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setToolbarTitle() {
-        getSupportActionBar().setTitle("Placeholder");
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Placeholder");
+        }
     }
 
     private void selectNavMenu() {
         navigationView.getMenu().getItem(navItemIndex).setChecked(true);
     }
 
-    @Override
+    @Override // from TODO
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
