@@ -1,6 +1,14 @@
 <resources>
     <string name="app_name">GitHubMarkdownViewer</string>
 
+    <!-- Toolbar titles when navigation menu item is selected -->
+    <string-array name="nav_item_activity_titles">
+        <item>Browse</item>
+        <item>Saved</item>
+        <item>Settings</item>
+        <item>About</item>
+    </string-array>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="openDrawer">open_drawer</string>

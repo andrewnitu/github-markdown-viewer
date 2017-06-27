@@ -48,9 +48,6 @@ public class UserSelectFragment extends Fragment implements TouchListener {
         super.onCreate(savedInstanceState);
         rootView = inflater.inflate(R.layout.fragment_user_select, container, false);
 
-        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-
         rootView.findViewById(R.id.loading_panel).setVisibility(View.GONE);
 
         repos = new ArrayList<Repo>();

@@ -25,7 +25,7 @@ import com.andrewnitu.githubmarkdownviewer.fragment.UserSelectFragment;
 
 import static com.andrewnitu.githubmarkdownviewer.R.id.toolbar;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
     public static int navItemIndex = 0;
     NavigationView navigationView;
     DrawerLayout drawer;
@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity{
     private static final String TAG_BROWSE = "browse";
     private static final String TAG_SAVED = "saved";
     private static final String TAG_SETTINGS = "settings";
+
+    private String[] sectionToolbarTitles;
 
     public static String currentTag = TAG_BROWSE;
 
@@ -56,6 +58,8 @@ public class MainActivity extends AppCompatActivity{
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
 
+        sectionToolbarTitles = getResources().getStringArray(R.array.nav_item_activity_titles);
+
         setUpNavigationView();
 
         if (savedInstanceState == null) {
@@ -75,12 +79,12 @@ public class MainActivity extends AppCompatActivity{
         // This code loads home fragment when back key is pressed
         // when user is in other fragment than home
 
-            // checking if user is on other navigation menu
-            // rather than home
-            if (navItemIndex != 0) {
-                navItemIndex = 0;
-                currentTag = TAG_BROWSE;
-                loadWhichFragment();
+        // checking if user is on other navigation menu
+        // rather than home
+        if (navItemIndex != 0) {
+            navItemIndex = 0;
+            currentTag = TAG_BROWSE;
+            loadWhichFragment();
         }
 
         super.onBackPressed();
@@ -95,7 +99,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private Fragment getWhichFragment() {
-        switch(navItemIndex) {
+        switch (navItemIndex) {
             case 0:
                 return new UserSelectFragment();
             case 1:
@@ -216,9 +220,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void setToolbarTitle() {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Placeholder");
-        }
+        getSupportActionBar().setTitle(sectionToolbarTitles[navItemIndex]);
     }
 
     private void selectNavMenu() {
