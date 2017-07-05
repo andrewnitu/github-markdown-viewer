@@ -1,12 +1,8 @@
 package com.andrewnitu.githubmarkdownviewer.activity;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
@@ -21,9 +17,8 @@ import android.view.MenuItem;
 
 import com.andrewnitu.githubmarkdownviewer.R;
 import com.andrewnitu.githubmarkdownviewer.fragment.SavedFragment;
+import com.andrewnitu.githubmarkdownviewer.fragment.SettingsFragment;
 import com.andrewnitu.githubmarkdownviewer.fragment.UserSelectFragment;
-
-import static com.andrewnitu.githubmarkdownviewer.R.id.toolbar;
 
 public class MainActivity extends AppCompatActivity {
     public static int navItemIndex = 0;
@@ -105,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
             case 1:
                 return new SavedFragment();
             case 2:
-                // TODO: Fill in
+
             default:
                 return new UserSelectFragment();
         }
@@ -173,9 +168,9 @@ public class MainActivity extends AppCompatActivity {
                         currentTag = TAG_SAVED;
                         break;
                     case R.id.nav_settings:
-                        //startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-                        //drawer.closeDrawers();
-                        //return true;
+                        startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                        drawer.closeDrawers();
+                        return true;
                     case R.id.nav_about:
                         //startActivity(new Intent(MainActivity.this, AboutActivity.class));
                         //drawer.closeDrawers();
