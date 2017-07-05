@@ -1,8 +1,10 @@
 package com.andrewnitu.githubmarkdownviewer.activity;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.andrewnitu.githubmarkdownviewer.R;
@@ -17,8 +19,15 @@ public class SettingsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
+        else {
+            Log.e("NULL", "getSupportActionBar() in SettingsActivity returns null");
+        }
 
         getFragmentManager().beginTransaction().replace(R.id.content_frame, new SettingsFragment()).commit();
     }
