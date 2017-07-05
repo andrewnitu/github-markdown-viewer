@@ -4,10 +4,8 @@
     android:layout_height="match_parent"
     tools:context="com.andrewnitu.githubmarkdownviewer.fragment.SavedFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <Spinner
+        android:id="@+id/bookmarked_spinner"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/placeholder_text" />
-
+        android:layout_height="wrap_content"></Spinner>
 </FrameLayout>
