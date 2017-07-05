@@ -4,23 +4,18 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toolbar;
 
 import com.andrewnitu.githubmarkdownviewer.R;
 
-public class SavedFragment extends Fragment {
+public class BookmarkedFragment extends Fragment {
     View rootView;
     ActionBar savedActivityToolbar;
 
-    public SavedFragment() {
+    public BookmarkedFragment() {
         // Required empty public constructor
     }
 
@@ -29,7 +24,7 @@ public class SavedFragment extends Fragment {
                              Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        rootView = inflater.inflate(R.layout.fragment_saved, container, false);
+        rootView = inflater.inflate(R.layout.fragment_bookmarked, container, false);
 
 
 

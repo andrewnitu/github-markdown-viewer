@@ -16,8 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.andrewnitu.githubmarkdownviewer.R;
-import com.andrewnitu.githubmarkdownviewer.fragment.SavedFragment;
-import com.andrewnitu.githubmarkdownviewer.fragment.SettingsFragment;
+import com.andrewnitu.githubmarkdownviewer.fragment.BookmarkedFragment;
 import com.andrewnitu.githubmarkdownviewer.fragment.UserSelectFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -98,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             case 0:
                 return new UserSelectFragment();
             case 1:
-                return new SavedFragment();
+                return new BookmarkedFragment();
             case 2:
 
             default:
