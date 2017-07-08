@@ -1,14 +1,13 @@
 package com.andrewnitu.githubmarkdownviewer.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.andrewnitu.githubmarkdownviewer.R;
-import com.andrewnitu.githubmarkdownviewer.model.Repo;
+import com.andrewnitu.githubmarkdownviewer.model.local.Repo;
 
 import java.util.List;
 

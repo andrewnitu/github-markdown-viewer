@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.andrewnitu.githubmarkdownviewer.R;
-import com.andrewnitu.githubmarkdownviewer.model.File;
+import com.andrewnitu.githubmarkdownviewer.model.local.File;
 
 import java.util.List;
 

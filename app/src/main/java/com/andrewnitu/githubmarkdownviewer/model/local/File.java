@@ -1,4 +1,4 @@
-package com.andrewnitu.githubmarkdownviewer.model;
+package com.andrewnitu.githubmarkdownviewer.model.local;
 
 /**
  * Data class to represent a GitHub File (inside a Repo, on a Branch)
