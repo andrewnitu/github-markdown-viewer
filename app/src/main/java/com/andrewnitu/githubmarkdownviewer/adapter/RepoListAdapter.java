@@ -8,9 +8,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.andrewnitu.githubmarkdownviewer.R;
+import com.andrewnitu.githubmarkdownviewer.model.db.RealmRepo;
 import com.andrewnitu.githubmarkdownviewer.model.local.Repo;
 
 import java.util.List;
+
+import io.realm.Realm;
 
 /**
  * Created by Andrew Nitu on 5/15/2017.
@@ -19,11 +22,14 @@ import java.util.List;
 public class RepoListAdapter extends RecyclerView.Adapter<RepoListAdapter.RepoViewHolder> {
     private List<Repo> repos;
 
+    private Realm realmInstance;
+
     private ClickListener clickListener = null;
 
     public RepoListAdapter(List<Repo> repos){
         this.repos = repos;
-        this.clickListener = clickListener;
+
+        realmInstance = Realm.getDefaultInstance();
     }
 
     @Override
@@ -40,6 +46,10 @@ public class RepoListAdapter extends RecyclerView.Adapter<RepoListAdapter.RepoVi
     @Override
     public void onBindViewHolder(final RepoViewHolder rvh, int i) {
         rvh.repoTitle.setText(repos.get(i).getName());
+
+        if (realmInstance.where(RealmRepo.class).equalTo("name", repos.get(i).getName()).equalTo("ownerUserName", repos.get(i).getOwnerUserName()).findFirst() != null) {
+            rvh.repoFavouriteIcon.setImageResource(R.drawable.ic_star_filled);
+        }
     }
 
     public class RepoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
