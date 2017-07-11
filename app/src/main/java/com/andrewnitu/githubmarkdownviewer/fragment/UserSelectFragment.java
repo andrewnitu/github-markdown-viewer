@@ -2,18 +2,21 @@ package com.andrewnitu.githubmarkdownviewer.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.andrewnitu.githubmarkdownviewer.R;
@@ -32,6 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmQuery;
@@ -175,14 +179,29 @@ public class UserSelectFragment extends Fragment implements ClickListener {
 
         realmInstance.beginTransaction();
         if (numResults == 0) {
-            RealmRepo repo = realmInstance.createObject(RealmRepo.class);
+            Log.d("Realm Transaction", "Added Repo object");
+            RealmRepo repo = realmInstance.createObject(RealmRepo.class, UUID.randomUUID().toString());
             repo.setName(repos.get(index).getName());
             repo.setOwnerUserName(repos.get(index).getOwnerUserName());
+            switchFavouritesIcon(true, view);
         }
         else {
+            Log.d("Realm Transaction", "Removed Repo object");
             repoResults.first().deleteFromRealm();
+            switchFavouritesIcon(false, view);
         }
         realmInstance.commitTransaction();
+    }
+
+    // true is highlighted, false is empty
+    public void switchFavouritesIcon(boolean state, View view) {
+        ImageView icon = (ImageView) view.findViewById(R.id.favourite_icon);
+        if (state) {
+            icon.setImageResource(R.drawable.ic_star_filled);
+        }
+        else {
+            icon.setImageResource(R.drawable.ic_star_empty);
+        }
     }
 
     @Override
