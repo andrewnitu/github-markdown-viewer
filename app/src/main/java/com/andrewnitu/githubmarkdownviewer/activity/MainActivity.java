@@ -36,14 +36,10 @@ public class MainActivity extends AppCompatActivity {
 
     public static String currentTag = TAG_BROWSE;
 
-    private Realm realmInstance;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        realmInstance = Realm.getDefaultInstance();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -240,11 +236,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        realmInstance.close();
     }
 }
