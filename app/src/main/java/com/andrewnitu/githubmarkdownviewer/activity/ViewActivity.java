@@ -24,7 +24,7 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ViewActivity extends AppCompatActivity implements ClickListener {
+public class ViewActivity extends AppCompatActivity {
     final String baseUrl = "https://api.github.com";
     final String mimeType = "text/html";
     final String encoding = "UTF-8";
@@ -99,10 +99,5 @@ public class ViewActivity extends AppCompatActivity implements ClickListener {
 
         // Add the request to the RequestQueue
         queue.add(stringRequest);
-    }
-
-    @Override
-    public void itemClicked(View view, int index) {
-
     }
 }
