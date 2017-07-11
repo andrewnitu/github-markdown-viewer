@@ -15,8 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.andrewnitu.githubmarkdownviewer.R;
+import com.andrewnitu.githubmarkdownviewer.adapter.ClickListener;
 import com.andrewnitu.githubmarkdownviewer.adapter.FileListAdapter;
-import com.andrewnitu.githubmarkdownviewer.adapter.TouchListener;
 import com.andrewnitu.githubmarkdownviewer.model.local.File;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -32,7 +32,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class RepoActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, TouchListener {
+public class RepoActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, ClickListener {
     final String baseUrl = "https://api.github.com";
 
     TextView usernameText;
@@ -102,7 +102,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         adapter = new FileListAdapter(files);
         recyclerView.setAdapter(adapter);
 
-        adapter.setTouchListener(this);
+        adapter.setClickListener(this);
     }
 
     @Override // from AppCompatActivity
@@ -116,8 +116,8 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         return super.onOptionsItemSelected(item);
     }
 
-    @Override // from TouchListener
-    public void itemClicked(View view, int index) {
+    @Override // from ClickListener
+    public void onRowClicked(View view, int index) {
         Intent intent = new Intent(this, ViewActivity.class);
 
         // Attach the username, reponame, and file path within that repo to the intent
@@ -128,6 +128,11 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
 
         // Start the intent
         startActivity(intent);
+    }
+
+    @Override // from ClickListener
+    public void onFavouriteClicked(View view, int index) {
+        // TODO Fill Realm database insert/remove implementation here
     }
 
     @Override // from AdapterView.OnItemSelectedListener
