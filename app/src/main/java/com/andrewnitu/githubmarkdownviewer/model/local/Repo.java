@@ -6,19 +6,19 @@ package com.andrewnitu.githubmarkdownviewer.model.local;
  * @author Andrew Nitu
  */
 public class Repo {
-    String name;
-    String path; // Format as path with leading slash but no trailing
+    String repoName;
+    String userName; // Format as path with leading slash but no trailing
 
-    public Repo (String name, String path) {
-        this.name = name;
-        this.path = path;
+    public Repo (String repoName, String userName) {
+        this.repoName = repoName;
+        this.userName = userName;
     }
 
     public String getName(){
-        return name;
+        return repoName;
     }
 
-    public String getPath(){
-        return path;
+    public String getOwnerUserName(){
+        return userName;
     }
 }
