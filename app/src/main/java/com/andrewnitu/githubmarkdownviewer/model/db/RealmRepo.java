@@ -20,4 +20,12 @@ public class RealmRepo extends RealmObject {
     public String getOwnerUserName() {
         return ownerUserName;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setOwnerUserName(String ownerUserName) {
+        this.ownerUserName = ownerUserName;
+    }
 }
