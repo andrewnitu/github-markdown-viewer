@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.andrewnitu.githubmarkdownviewer.R;
@@ -18,10 +19,11 @@ import java.util.List;
 public class RepoListAdapter extends RecyclerView.Adapter<RepoListAdapter.RepoViewHolder> {
     private List<Repo> repos;
 
-    private TouchListener touchListener = null;
+    private ClickListener clickListener = null;
 
     public RepoListAdapter(List<Repo> repos){
         this.repos = repos;
+        this.clickListener = clickListener;
     }
 
     @Override
@@ -36,29 +38,38 @@ public class RepoListAdapter extends RecyclerView.Adapter<RepoListAdapter.RepoVi
     }
 
     @Override
-    public void onBindViewHolder(RepoViewHolder rvh, int i) {
+    public void onBindViewHolder(final RepoViewHolder rvh, int i) {
         rvh.repoTitle.setText(repos.get(i).getName());
     }
 
     public class RepoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        protected TextView repoTitle;
-        protected TextView repoUrl;
+        private TextView repoTitle;
+        private ImageView repoFavouriteIcon;
 
-        public RepoViewHolder(View itemView) {
+        private RepoViewHolder(View itemView) {
             super(itemView);
+
+            repoTitle = (TextView) itemView.findViewById(R.id.repo_title);
+            repoFavouriteIcon = (ImageView) itemView.findViewById(R.id.favourite_icon);
+
             itemView.setOnClickListener(this);
-            repoTitle = (TextView)itemView.findViewById(R.id.repo_title);
+            repoFavouriteIcon.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            if (touchListener != null) {
-                touchListener.itemClicked(v, getAdapterPosition());
+            if (clickListener != null) {
+                if (v.getId() == repoFavouriteIcon.getId()) {
+                    clickListener.onFavouriteClicked(v, getAdapterPosition());
+                }
+                else {
+                    clickListener.onRowClicked(v, getAdapterPosition());
+                }
             }
         }
     }
 
-    public void setTouchListener(TouchListener touchListener) {
-        this.touchListener = touchListener;
+    public void setClickListener(ClickListener clickListener) {
+        this.clickListener = clickListener;
     }
 }

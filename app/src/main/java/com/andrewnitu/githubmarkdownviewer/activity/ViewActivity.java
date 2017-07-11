@@ -13,7 +13,7 @@ import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.andrewnitu.githubmarkdownviewer.R;
-import com.andrewnitu.githubmarkdownviewer.adapter.TouchListener;
+import com.andrewnitu.githubmarkdownviewer.adapter.ClickListener;
 import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -24,7 +24,7 @@ import com.android.volley.toolbox.Volley;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ViewActivity extends AppCompatActivity implements TouchListener {
+public class ViewActivity extends AppCompatActivity implements ClickListener {
     final String baseUrl = "https://api.github.com";
     final String mimeType = "text/html";
     final String encoding = "UTF-8";

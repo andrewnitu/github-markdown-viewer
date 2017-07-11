@@ -1,9 +1,11 @@
 package com.andrewnitu.githubmarkdownviewer.adapter;
 
+import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.andrewnitu.githubmarkdownviewer.R;
@@ -18,7 +20,7 @@ import java.util.List;
 public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.BranchViewHolder> {
     private List<File> files;
 
-    private TouchListener touchListener = null;
+    private ClickListener clickListener = null;
 
     public FileListAdapter(List<File> files){
         this.files = files;
@@ -31,7 +33,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.Branch
 
     @Override
     public BranchViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_branch, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_file, viewGroup, false);
         return new BranchViewHolder(v);
     }
 
@@ -42,7 +44,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.Branch
 
     public class BranchViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         protected TextView branchTitle;
-        protected TextView branchUrl;
+        protected ImageView repoFavouriteIcon;
 
         public BranchViewHolder(View itemView) {
             super(itemView);
@@ -52,13 +54,18 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.Branch
 
         @Override
         public void onClick(View v) {
-            if (touchListener != null) {
-                touchListener.itemClicked(v, getAdapterPosition());
+            if (clickListener != null) {
+                if (v.getId() == repoFavouriteIcon.getId()) {
+                    clickListener.onFavouriteClicked(v, getAdapterPosition());
+                }
+                else {
+                    clickListener.onRowClicked(v, getAdapterPosition());
+                }
             }
         }
     }
 
-    public void setTouchListener(TouchListener touchListener) {
-        this.touchListener = touchListener;
+    public void setClickListener(ClickListener clickListener) {
+        this.clickListener = clickListener;
     }
 }
