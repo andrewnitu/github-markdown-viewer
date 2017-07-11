@@ -11,8 +11,10 @@ public class RealmApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Realm.init(this);
+
+        // TODO Check this deleteRealmIfMigrationNeeded() - What does it mean and how can we make it foolproof?
         RealmConfiguration config =
-                new RealmConfiguration.Builder().name("ghmdviewerfavos.realm").build();
+                new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().name("ghmdviewerfavos.realm").build();
         Realm.setDefaultConfiguration(config);
         Log.d("Realm setup", "Realm initialized and configured");
     }
