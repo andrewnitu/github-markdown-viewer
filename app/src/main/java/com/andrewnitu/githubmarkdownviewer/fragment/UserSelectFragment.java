@@ -3,6 +3,7 @@ package com.andrewnitu.githubmarkdownviewer.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,7 +19,8 @@ import android.widget.Toast;
 import com.andrewnitu.githubmarkdownviewer.R;
 import com.andrewnitu.githubmarkdownviewer.activity.RepoActivity;
 import com.andrewnitu.githubmarkdownviewer.adapter.RepoListAdapter;
-import com.andrewnitu.githubmarkdownviewer.adapter.TouchListener;
+import com.andrewnitu.githubmarkdownviewer.adapter.ClickListener;
+import com.andrewnitu.githubmarkdownviewer.model.db.RealmRepo;
 import com.andrewnitu.githubmarkdownviewer.model.local.Repo;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -31,7 +33,11 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-public class UserSelectFragment extends Fragment implements TouchListener {
+import io.realm.Realm;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
+
+public class UserSelectFragment extends Fragment implements ClickListener {
     final String baseUrl = "https://api.github.com";
 
     private EditText usernameBox;
@@ -41,10 +47,14 @@ public class UserSelectFragment extends Fragment implements TouchListener {
     private String username;
     private View rootView;
 
+    private Realm realmInstance;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         rootView = inflater.inflate(R.layout.fragment_user_select, container, false);
+
+        realmInstance = Realm.getDefaultInstance();
 
         rootView.findViewById(R.id.loading_panel).setVisibility(View.GONE);
 
@@ -74,7 +84,7 @@ public class UserSelectFragment extends Fragment implements TouchListener {
         adapter = new RepoListAdapter(repos);
         recyclerView.setAdapter(adapter);
 
-        adapter.setTouchListener(this);
+        adapter.setClickListener(this);
 
         return rootView;
     }
@@ -101,12 +111,11 @@ public class UserSelectFragment extends Fragment implements TouchListener {
 
                             // For each repo
                             while (numExtracted < response.length()) {
-                                // Retrieve the name
+                                // Retrieve the repository name
                                 String repoName = response.getJSONObject(numExtracted).getString("name");
 
                                 // TODO: Add the URL property
-                                repos.add(new Repo(repoName,
-                                        response.getJSONObject(numExtracted).getString("name")));
+                                repos.add(new Repo(repoName, reqUsername));
                                 numExtracted++;
                             }
                         } catch (JSONException e) {
@@ -148,11 +157,37 @@ public class UserSelectFragment extends Fragment implements TouchListener {
     }
 
     @Override
-    public void itemClicked(View view, int index) {
+    public void onRowClicked(View view, int index) {
         Intent intent = new Intent(getActivity(), RepoActivity.class);
         intent.putExtra("Username", username);
         intent.putExtra("Reponame", repos.get(index).getName());
 
         startActivity(intent);
+    }
+
+    @Override
+    public void onFavouriteClicked(View view, int index) {
+        RealmQuery<RealmRepo> repoQuery = realmInstance.where(RealmRepo.class).equalTo("name", repos.get(index).getName()).equalTo("ownerUserName", repos.get(index).getOwnerUserName());
+
+        RealmResults<RealmRepo> repoResults = repoQuery.findAll();
+
+        int numResults = repoResults.size();
+
+        realmInstance.beginTransaction();
+        if (numResults == 0) {
+            RealmRepo repo = realmInstance.createObject(RealmRepo.class);
+            repo.setName(repos.get(index).getName());
+            repo.setOwnerUserName(repos.get(index).getOwnerUserName());
+        }
+        else {
+            repoResults.first().deleteFromRealm();
+        }
+        realmInstance.commitTransaction();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        realmInstance.close();
     }
 }
