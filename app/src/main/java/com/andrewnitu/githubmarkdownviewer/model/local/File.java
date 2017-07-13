@@ -7,18 +7,18 @@ package com.andrewnitu.githubmarkdownviewer.model.local;
  */
 public class File {
     String name;
-    String path;
+    String url;
 
-    public File (String name, String path) {
+    public File (String name, String url) {
         this.name = name;
-        this.path = path;
+        this.url = url;
     }
 
     public String getName(){
         return name;
     }
 
-    public String getPath(){
-        return name;
+    public String getUrl(){
+        return url;
     }
 }
