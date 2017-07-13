@@ -2,9 +2,7 @@ package com.andrewnitu.githubmarkdownviewer.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,8 +19,8 @@ import android.widget.Toast;
 
 import com.andrewnitu.githubmarkdownviewer.R;
 import com.andrewnitu.githubmarkdownviewer.activity.RepoActivity;
-import com.andrewnitu.githubmarkdownviewer.adapter.RepoListAdapter;
 import com.andrewnitu.githubmarkdownviewer.adapter.ClickListener;
+import com.andrewnitu.githubmarkdownviewer.adapter.RepoListAdapter;
 import com.andrewnitu.githubmarkdownviewer.model.db.RealmRepo;
 import com.andrewnitu.githubmarkdownviewer.model.local.Repo;
 import com.android.volley.RequestQueue;
@@ -58,22 +56,24 @@ public class UserSelectFragment extends Fragment implements ClickListener {
         super.onCreate(savedInstanceState);
         rootView = inflater.inflate(R.layout.fragment_user_select, container, false);
 
+        // Get our Realm instance
         realmInstance = Realm.getDefaultInstance();
 
         rootView.findViewById(R.id.loading_panel).setVisibility(View.GONE);
 
+        // Initialize empty Repo array which will be loaded into
         repos = new ArrayList<Repo>();
 
+        // Bind our UI elements
         usernameBox = (EditText) rootView.findViewById(R.id.edit_text);
-
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
 
+        // Set up our submit button
         View.OnClickListener btnSubmitClickListener = new View.OnClickListener() {
             public void onClick(View v) {
                 retrieveRepos(v);
             }
         };
-
         Button btnSubmit = (Button) rootView.findViewById(R.id.submit);
         btnSubmit.setOnClickListener(btnSubmitClickListener);
 
@@ -81,10 +81,12 @@ public class UserSelectFragment extends Fragment implements ClickListener {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
 
+        // Set up RecyclerView row dividers
         DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 llm.getOrientation());
         recyclerView.addItemDecoration(mDividerItemDecoration);
 
+        // Give our RecyclerView an adapter
         adapter = new RepoListAdapter(repos);
         recyclerView.setAdapter(adapter);
 
@@ -193,7 +195,8 @@ public class UserSelectFragment extends Fragment implements ClickListener {
         realmInstance.commitTransaction();
     }
 
-    // true is highlighted, false is empty
+    // Switches the favourites icon in the view
+    // Takes a state (true for favourited, false for unfavourited) and the View of the row clicked
     public void switchFavouritesIcon(boolean state, View view) {
         ImageView icon = (ImageView) view.findViewById(R.id.favourite_icon);
         if (state) {
