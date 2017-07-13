@@ -6,10 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 import com.andrewnitu.githubmarkdownviewer.R;
 import com.andrewnitu.githubmarkdownviewer.adapter.ClickListener;
 import com.andrewnitu.githubmarkdownviewer.adapter.FileListAdapter;
+import com.andrewnitu.githubmarkdownviewer.model.db.RealmFile;
 import com.andrewnitu.githubmarkdownviewer.model.local.File;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -31,6 +34,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.UUID;
+
+import io.realm.Realm;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 
 public class RepoActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, ClickListener {
     final String baseUrl = "https://api.github.com";
@@ -48,12 +56,17 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
     private ArrayAdapter<String> dataAdapter;
     private Spinner branchPicker;
 
+    private Realm realmInstance;
+
     @Override // from AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_repo);
 
         findViewById(R.id.loading_panel).setVisibility(View.GONE);
+
+        // Get our Realm instance to write to
+        realmInstance = Realm.getDefaultInstance();
 
         // Initialize the ArrayList
         branches = new ArrayList<String>();
@@ -108,7 +121,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override // from AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         // Magic from StackOverflow
-        switch ( item.getItemId() ) {
+        switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 return true;
@@ -124,7 +137,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         intent.putExtra("Username", username);
         intent.putExtra("Reponame", reponame);
         intent.putExtra("Branchname", branchname);
-        intent.putExtra("Filepath", files.get(index).getPath());
+        intent.putExtra("Filepath", files.get(index).getName());
 
         // Start the intent
         startActivity(intent);
@@ -132,7 +145,40 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override // from ClickListener
     public void onFavouriteClicked(View view, int index) {
-        // TODO Fill Realm database insert/remove implementation here
+        RealmQuery<RealmFile> fileQuery = realmInstance.where(RealmFile.class).equalTo("name", files.get(index).getName()).equalTo("url", files.get(index).getUrl());
+
+        RealmResults<RealmFile> fileResults = fileQuery.findAll();
+
+        int numResults = fileResults.size();
+
+        realmInstance.beginTransaction();
+        if (numResults == 0) {
+            Log.d("Realm Transaction", "Added File object");
+            RealmFile file = realmInstance.createObject(RealmFile.class, UUID.randomUUID().toString());
+            file.setName(files.get(index).getName());
+            file.setUrl(files.get(index).getUrl());
+            switchFavouritesIcon(true, view);
+        } else {
+            Log.d("Realm Transaction", "Removed File object");
+            fileResults.first().deleteFromRealm();
+            switchFavouritesIcon(false, view);
+        }
+        realmInstance.commitTransaction();
+    }
+
+    public void switchFavouritesIcon(boolean state, View view) {
+        ImageView icon = (ImageView) view.findViewById(R.id.favourite_icon);
+        if (state) {
+            icon.setImageResource(R.drawable.ic_star_filled);
+        } else {
+            icon.setImageResource(R.drawable.ic_star_empty);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        realmInstance.close();
     }
 
     @Override // from AdapterView.OnItemSelectedListener
@@ -167,7 +213,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
                         try {
                             int numExtracted = 0;
 
-                            // For each repo
+                            // For each branch
                             while (numExtracted < response.length()) {
                                 // Retrieve the name
                                 String branchName = response.getJSONObject(numExtracted).getString("name");
@@ -176,8 +222,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
                                 // if it IS master remember that master exists and don't add it
                                 if (branchName.equals("master")) {
                                     hasMaster = true;
-                                }
-                                else {
+                                } else {
                                     branches.add(branchName);
                                 }
                                 numExtracted++;
@@ -212,7 +257,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         // Instantiate the RequestQueue
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        // Create the URL to request the repositories for a user
+        // Create the URL to request all files in a user's repo under a branch
         String requestURL = baseUrl + "/repos/" + reqUserName + "/" + reqRepoName + "/git/trees/" + reqBranchName + "?recursive=1";
 
         // Request a string response from the provided URL
@@ -229,15 +274,18 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
                             // For each file
                             while (numExtracted < tree.length()) {
                                 // Retrieve the name
-                                String path = tree.getJSONObject(numExtracted).getString("path");
+                                String name = tree.getJSONObject(numExtracted).getString("path");
+                                String url = tree.getJSONObject(numExtracted).getString("url");
 
                                 // Add a new file to the list with the appropriate parameters
-                                // TODO Finalize these parameters
-                                files.add(new File(path, path));
+                                files.add(new File(name, url));
+
+                                Log.e("FILESSIZE",files.size() + "");
 
                                 numExtracted++;
                             }
                         } catch (JSONException e) {
+                            Log.e("JSON Parse Error", "Error parsing file JSON!");
                         }
 
                         // Update the RecyclerView (don't wait for the user to)
@@ -249,8 +297,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast toast = Toast.makeText(getApplicationContext(), "Couldn't find branches!", Toast.LENGTH_LONG);
-                        toast.show();
+                        Log.e("API Fetch Error", "Error fetching list of files!");
                     }
                 });
 
