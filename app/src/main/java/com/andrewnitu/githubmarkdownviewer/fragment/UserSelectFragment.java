@@ -52,6 +52,14 @@ public class UserSelectFragment extends Fragment implements ClickListener {
     private Realm realmInstance;
 
     @Override
+    public void onResume()
+    {  // After a pause OR at startup
+        super.onResume();
+
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         rootView = inflater.inflate(R.layout.fragment_user_select, container, false);
