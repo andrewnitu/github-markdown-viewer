@@ -145,7 +145,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override // from ClickListener
     public void onFavouriteClicked(View view, int index) {
-        RealmQuery<RealmFile> fileQuery = realmInstance.where(RealmFile.class).equalTo("name", files.get(index).getName()).equalTo("url", files.get(index).getUrl());
+        RealmQuery<RealmFile> fileQuery = realmInstance.where(RealmFile.class).equalTo("name", files.get(index).getName()).equalTo("url", files.get(index).getUrl()).equalTo("branch", files.get(index).getBranch());
 
         RealmResults<RealmFile> fileResults = fileQuery.findAll();
 
@@ -156,6 +156,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
             Log.d("Realm Transaction", "Added File object");
             RealmFile file = realmInstance.createObject(RealmFile.class, UUID.randomUUID().toString());
             file.setName(files.get(index).getName());
+            file.setBranch(files.get(index).getBranch());
             file.setUrl(files.get(index).getUrl());
             switchFavouritesIcon(true, view);
         } else {
@@ -184,6 +185,9 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override // from AdapterView.OnItemSelectedListener
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         // On selecting a spinner item
+
+        files.clear();
+
         branchname = parent.getItemAtPosition(position).toString();
 
         findViewById(R.id.loading_panel).setVisibility(View.VISIBLE);
@@ -258,7 +262,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         RequestQueue queue = Volley.newRequestQueue(this);
 
         // Create the URL to request all files in a user's repo under a branch
-        String requestURL = baseUrl + "/repos/" + reqUserName + "/" + reqRepoName + "/git/trees/" + reqBranchName + "?recursive=1";
+        final String requestURL = baseUrl + "/repos/" + reqUserName + "/" + reqRepoName + "/git/trees/" + reqBranchName + "?recursive=1";
 
         // Request a string response from the provided URL
         JsonObjectRequest stringRequest = new JsonObjectRequest(requestURL, null,
@@ -273,19 +277,22 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
 
                             // For each file
                             while (numExtracted < tree.length()) {
-                                // Retrieve the name
-                                String name = tree.getJSONObject(numExtracted).getString("path");
-                                String url = tree.getJSONObject(numExtracted).getString("url");
+                                if (tree.getJSONObject(numExtracted).has("url")) {
+                                    // Retrieve the name
+                                    String name = tree.getJSONObject(numExtracted).getString("path");
+                                    String branch = reqBranchName;
+                                    String url = tree.getJSONObject(numExtracted).getString("url");
 
-                                // Add a new file to the list with the appropriate parameters
-                                files.add(new File(name, url));
-
-                                Log.e("FILESSIZE",files.size() + "");
+                                    // Add a new file to the list with the appropriate parameters
+                                    files.add(new File(name, branch, url));
+                                }
 
                                 numExtracted++;
                             }
                         } catch (JSONException e) {
+                            Log.e("test", requestURL);
                             Log.e("JSON Parse Error", "Error parsing file JSON!");
+                            Log.e("test", e.getMessage());
                         }
 
                         // Update the RecyclerView (don't wait for the user to)
