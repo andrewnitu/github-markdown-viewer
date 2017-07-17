@@ -10,6 +10,7 @@ public class RealmFile extends RealmObject {
     private String id;
 
     private String name;
+    private String branch;
     private String url;
 
     public RealmFile() {}
@@ -18,12 +19,20 @@ public class RealmFile extends RealmObject {
         return name;
     }
 
+    public String getBranch() {
+        return branch;
+    }
+
     public String getUrl() {
         return url;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setBranch(String branch) {
+        this.branch = branch;
     }
 
     public void setUrl(String url) {
