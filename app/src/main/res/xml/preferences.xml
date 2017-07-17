@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <Preference android:title="Clear saved repos"
+        android:enabled="true"
         android:key="clearSavedRepos"
         android:summary="This will clear all the bookmarked repos."/>
+    <Preference android:title="Clear saved files"
+        android:enabled="true"
+        android:key="clearSavedFiles"
+        android:summary="This will clear all the bookmarked files."/>
 </PreferenceScreen>
