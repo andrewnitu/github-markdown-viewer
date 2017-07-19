@@ -16,10 +16,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.andrewnitu.githubmarkdownviewer.R;
-import com.andrewnitu.githubmarkdownviewer.fragment.BookmarkedFragment;
+import com.andrewnitu.githubmarkdownviewer.fragment.FavoritesFragment;
 import com.andrewnitu.githubmarkdownviewer.fragment.UserSelectFragment;
-
-import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity {
     public static int navItemIndex = 0;
@@ -99,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
             case 0:
                 return new UserSelectFragment();
             case 1:
-                return new BookmarkedFragment();
+                return new FavoritesFragment();
             case 2:
 
             default:
