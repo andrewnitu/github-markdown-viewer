@@ -1,4 +1,4 @@
-package com.andrewnitu.githubmarkdownviewer.fragment.favourites;
+package com.andrewnitu.githubmarkdownviewer.fragment.favorites;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
