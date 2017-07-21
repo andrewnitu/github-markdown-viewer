@@ -45,9 +45,10 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.Branch
 
     @Override
     public void onBindViewHolder(BranchViewHolder bvh, int i) {
-        bvh.branchTitle.setText(files.get(i).getName());
+        bvh.branchTitle.setText(files.get(i).getPath());
 
-        if (realmInstance.where(RealmFile.class).equalTo("name", files.get(i).getName()).equalTo("url", files.get(i).getUrl()).equalTo("branch", files.get(i).getBranch()).findFirst() != null) {
+        if (realmInstance.where(RealmFile.class).equalTo("ownerUserName", files.get(i).getOwnerUserName())
+                .equalTo("repoName", files.get(i).getRepoName()).equalTo("path", files.get(i).getPath()).equalTo("branchName", files.get(i).getBranchName()).findFirst() != null) {
             bvh.branchFavouriteIcon.setImageResource(R.drawable.ic_star_filled);
         }
     }

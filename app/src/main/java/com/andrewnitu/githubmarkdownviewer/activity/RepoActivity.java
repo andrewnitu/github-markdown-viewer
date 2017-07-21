@@ -134,10 +134,10 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         Intent intent = new Intent(this, ViewActivity.class);
 
         // Attach the username, reponame, and file path within that repo to the intent
-        intent.putExtra("Username", username);
-        intent.putExtra("Reponame", reponame);
-        intent.putExtra("Branchname", branchname);
-        intent.putExtra("Filepath", files.get(index).getName());
+        intent.putExtra("Filepath", files.get(index).getPath());
+        intent.putExtra("Username", files.get(index).getOwnerUserName());
+        intent.putExtra("Reponame", files.get(index).getRepoName());
+        intent.putExtra("Branchname", files.get(index).getBranchName());
 
         // Start the intent
         startActivity(intent);
@@ -145,7 +145,8 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override // from ClickListener
     public void onFavouriteClicked(View view, int index) {
-        RealmQuery<RealmFile> fileQuery = realmInstance.where(RealmFile.class).equalTo("name", files.get(index).getName()).equalTo("url", files.get(index).getUrl()).equalTo("branch", files.get(index).getBranch());
+        RealmQuery<RealmFile> fileQuery = realmInstance.where(RealmFile.class).equalTo("ownerUserName", files.get(index).getOwnerUserName())
+                .equalTo("repoName", files.get(index).getRepoName()).equalTo("path", files.get(index).getPath()).equalTo("branchName", files.get(index).getBranchName());
 
         RealmResults<RealmFile> fileResults = fileQuery.findAll();
 
@@ -153,14 +154,15 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
 
         realmInstance.beginTransaction();
         if (numResults == 0) {
-            Log.d("Realm Transaction", "Added File object");
+            Log.d("Realm Transaction", "Added Repo object");
             RealmFile file = realmInstance.createObject(RealmFile.class, UUID.randomUUID().toString());
-            file.setName(files.get(index).getName());
-            file.setBranch(files.get(index).getBranch());
-            file.setUrl(files.get(index).getUrl());
+            file.setOwnerUserName(files.get(index).getOwnerUserName());
+            file.setRepoName(files.get(index).getRepoName());
+            file.setPath(files.get(index).getPath());
+            file.setBranchName(files.get(index).getBranchName());
             switchFavouritesIcon(true, view);
         } else {
-            Log.d("Realm Transaction", "Removed File object");
+            Log.d("Realm Transaction", "Removed Repo object");
             fileResults.first().deleteFromRealm();
             switchFavouritesIcon(false, view);
         }
@@ -279,20 +281,18 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
                             while (numExtracted < tree.length()) {
                                 if (tree.getJSONObject(numExtracted).has("url")) {
                                     // Retrieve the name
-                                    String name = tree.getJSONObject(numExtracted).getString("path");
+                                    String path = tree.getJSONObject(numExtracted).getString("path");
                                     String branch = reqBranchName;
                                     String url = tree.getJSONObject(numExtracted).getString("url");
 
                                     // Add a new file to the list with the appropriate parameters
-                                    files.add(new File(name, branch, url));
+                                    files.add(new File(reqUserName, reqRepoName, branch, path));
                                 }
 
                                 numExtracted++;
                             }
                         } catch (JSONException e) {
-                            Log.e("test", requestURL);
                             Log.e("JSON Parse Error", "Error parsing file JSON!");
-                            Log.e("test", e.getMessage());
                         }
 
                         // Update the RecyclerView (don't wait for the user to)
