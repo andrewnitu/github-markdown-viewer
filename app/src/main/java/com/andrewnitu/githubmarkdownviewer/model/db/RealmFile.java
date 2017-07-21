@@ -9,33 +9,42 @@ public class RealmFile extends RealmObject {
     @PrimaryKey
     private String id;
 
-    private String name;
-    private String branch;
-    private String url;
+    private String ownerUserName;
+    private String repoName;
+    private String path;
+    private String branchName;
 
     public RealmFile() {}
 
-    public String getName() {
-        return name;
+    public String getOwnerUserName() {
+        return ownerUserName;
     }
 
-    public String getBranch() {
-        return branch;
+    public String getRepoName() {
+        return repoName;
     }
 
-    public String getUrl() {
-        return url;
+    public String getPath() {
+        return path;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getBranchName() {
+        return branchName;
     }
 
-    public void setBranch(String branch) {
-        this.branch = branch;
+    public void setOwnerUserName(String ownerUserName) {
+        this.ownerUserName = ownerUserName;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setRepoName(String repoName) {
+        this.repoName = repoName;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
     }
 }

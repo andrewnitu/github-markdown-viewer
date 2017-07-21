@@ -6,25 +6,47 @@ package com.andrewnitu.githubmarkdownviewer.model.local;
  * @author Andrew Nitu
  */
 public class File {
-    String name;
-    String branch;
-    String url;
+    String ownerUserName;
+    String repoName;
+    String branchName;
+    String path;
 
-    public File (String name, String branch, String url) {
-        this.name = name;
-        this.branch = branch;
-        this.url = url;
+    public File(String ownerUserName, String repoName,String branchName, String path) {
+        this.ownerUserName = ownerUserName;
+        this.repoName = repoName;
+        this.path = path;
+        this.branchName = branchName;
     }
 
-    public String getName(){
-        return name;
+    public String getOwnerUserName() {
+        return ownerUserName;
     }
 
-    public String getBranch(){
-        return branch;
+    public void setOwnerUserName(String ownerUserName) {
+        this.ownerUserName = ownerUserName;
     }
 
-    public String getUrl(){
-        return url;
+    public String getRepoName() {
+        return repoName;
+    }
+
+    public void setRepoName(String repoName) {
+        this.repoName = repoName;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getBranchName() {
+        return branchName;
+    }
+
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
     }
 }
