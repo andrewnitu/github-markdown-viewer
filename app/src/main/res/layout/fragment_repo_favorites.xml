@@ -8,7 +8,7 @@
     tools:context="com.andrewnitu.githubmarkdownviewer.fragment.favorites.FavoritesRepoFragment"
     tools:showIn="@layout/fragment_repo_favorites">
 
-    <android.support.v7.widget.RecyclerView
+    <com.andrewnitu.githubmarkdownviewer.component.RecyclerViewEmptySupport
         android:id="@+id/recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -19,4 +19,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         android:layout_marginBottom="0dp" />
+
+    <TextView
+        android:textSize="20sp"
+        android:id="@+id/recyclerview_empty_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/favorite_repo_list_empty" />
 </android.support.constraint.ConstraintLayout>
