@@ -4,7 +4,7 @@
     <!-- Toolbar titles when navigation menu item is selected -->
     <string-array name="nav_item_activity_titles">
         <item>Browse</item>
-        <item>Saved</item>
+        <item>Favorites</item>
         <item>Settings</item>
         <item>About</item>
     </string-array>
@@ -20,4 +20,9 @@
     <string name="title_activity_main">MainActivity</string>
 
     <string name="placeholder_text">PLACEHOLDER</string>
+
+    <string name="file_list_empty">This repo is empty.</string>
+    <string name="repo_list_empty">This user has no repos.</string>
+    <string name="favorite_file_list_empty">No favorite files.</string>
+    <string name="favorite_repo_list_empty">No favorite repos.</string>
 </resources>
