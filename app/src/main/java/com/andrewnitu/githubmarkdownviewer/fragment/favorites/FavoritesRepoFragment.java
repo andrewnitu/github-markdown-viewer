@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import com.andrewnitu.githubmarkdownviewer.R;
 import com.andrewnitu.githubmarkdownviewer.activity.RepoActivity;
 import com.andrewnitu.githubmarkdownviewer.adapter.ClickListener;
-import com.andrewnitu.githubmarkdownviewer.adapter.RepoListAdapter;
+import com.andrewnitu.githubmarkdownviewer.adapter.favorites.RepoListFavoritesAdapter;
 import com.andrewnitu.githubmarkdownviewer.component.RecyclerViewEmptySupport;
 import com.andrewnitu.githubmarkdownviewer.model.db.RealmRepo;
 import com.andrewnitu.githubmarkdownviewer.model.local.Repo;
@@ -35,7 +35,7 @@ public class FavoritesRepoFragment extends Fragment implements ClickListener {
 
     private RecyclerViewEmptySupport recyclerView;
     private ArrayList<Repo> repos;
-    private RepoListAdapter adapter;
+    private RepoListFavoritesAdapter adapter;
 
     @Override
     public void onResume() {  // After a pause OR at startup
@@ -79,7 +79,7 @@ public class FavoritesRepoFragment extends Fragment implements ClickListener {
         recyclerView.addItemDecoration(mDividerItemDecoration);
 
         // Give our RecyclerView an adapter
-        adapter = new RepoListAdapter(repos);
+        adapter = new RepoListFavoritesAdapter(repos);
         recyclerView.setAdapter(adapter);
 
         adapter.setClickListener(this);

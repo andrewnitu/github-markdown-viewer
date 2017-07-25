@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import com.andrewnitu.githubmarkdownviewer.R;
 import com.andrewnitu.githubmarkdownviewer.activity.ViewActivity;
 import com.andrewnitu.githubmarkdownviewer.adapter.ClickListener;
-import com.andrewnitu.githubmarkdownviewer.adapter.FileListAdapter;
+import com.andrewnitu.githubmarkdownviewer.adapter.FileListFavoritesAdapter;
 import com.andrewnitu.githubmarkdownviewer.component.RecyclerViewEmptySupport;
 import com.andrewnitu.githubmarkdownviewer.model.db.RealmFile;
 import com.andrewnitu.githubmarkdownviewer.model.local.File;
@@ -35,7 +35,7 @@ public class FavoritesFileFragment extends Fragment implements ClickListener {
 
     private RecyclerViewEmptySupport recyclerView;
     private ArrayList<File> files;
-    private FileListAdapter adapter;
+    private FileListFavoritesAdapter adapter;
 
     @Override
     public void onResume() {  // After a pause OR at startup
@@ -78,7 +78,7 @@ public class FavoritesFileFragment extends Fragment implements ClickListener {
         recyclerView.addItemDecoration(mDividerItemDecoration);
 
         // Give our RecyclerView an adapter
-        adapter = new FileListAdapter(files);
+        adapter = new FileListFavoritesAdapter(files);
         recyclerView.setAdapter(adapter);
 
         adapter.setClickListener(this);
