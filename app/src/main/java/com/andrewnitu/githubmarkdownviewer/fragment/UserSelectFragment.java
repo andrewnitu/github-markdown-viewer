@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +20,7 @@ import com.andrewnitu.githubmarkdownviewer.R;
 import com.andrewnitu.githubmarkdownviewer.activity.RepoActivity;
 import com.andrewnitu.githubmarkdownviewer.adapter.ClickListener;
 import com.andrewnitu.githubmarkdownviewer.adapter.RepoListAdapter;
+import com.andrewnitu.githubmarkdownviewer.component.RecyclerViewEmptyFirstLoadSupport;
 import com.andrewnitu.githubmarkdownviewer.model.db.RealmRepo;
 import com.andrewnitu.githubmarkdownviewer.model.local.Repo;
 import com.android.volley.RequestQueue;
@@ -43,11 +43,13 @@ public class UserSelectFragment extends Fragment implements ClickListener {
     final String baseUrl = "https://api.github.com";
 
     private EditText usernameBox;
-    private RecyclerView recyclerView;
+    private RecyclerViewEmptyFirstLoadSupport recyclerView;
     private ArrayList<Repo> repos;
     private RepoListAdapter adapter;
     private String username;
     private View rootView;
+
+    private Boolean firstSearch = true;
 
     private Realm realmInstance;
 
@@ -74,7 +76,8 @@ public class UserSelectFragment extends Fragment implements ClickListener {
 
         // Bind our UI elements
         usernameBox = (EditText) rootView.findViewById(R.id.edit_text);
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerViewEmptyFirstLoadSupport) rootView.findViewById(R.id.recycler_view);
+        recyclerView.setEmptyView(rootView.findViewById(R.id.recyclerview_empty_text));
 
         // Set up our submit button
         View.OnClickListener btnSubmitClickListener = new View.OnClickListener() {

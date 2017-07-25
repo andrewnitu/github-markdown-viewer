@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +16,7 @@ import com.andrewnitu.githubmarkdownviewer.R;
 import com.andrewnitu.githubmarkdownviewer.activity.ViewActivity;
 import com.andrewnitu.githubmarkdownviewer.adapter.ClickListener;
 import com.andrewnitu.githubmarkdownviewer.adapter.FileListAdapter;
+import com.andrewnitu.githubmarkdownviewer.component.RecyclerViewEmptySupport;
 import com.andrewnitu.githubmarkdownviewer.model.db.RealmFile;
 import com.andrewnitu.githubmarkdownviewer.model.local.File;
 
@@ -33,7 +33,7 @@ public class FavoritesFileFragment extends Fragment implements ClickListener {
 
     private Realm realmInstance;
 
-    private RecyclerView recyclerView;
+    private RecyclerViewEmptySupport recyclerView;
     private ArrayList<File> files;
     private FileListAdapter adapter;
 
@@ -65,7 +65,8 @@ public class FavoritesFileFragment extends Fragment implements ClickListener {
         }
 
         // Bind our UI elements
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerViewEmptySupport) rootView.findViewById(R.id.recycler_view);
+        recyclerView.setEmptyView(rootView.findViewById(R.id.recyclerview_empty_text));
 
         LinearLayoutManager llm = new LinearLayoutManager(this.getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);

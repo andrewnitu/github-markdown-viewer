@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +18,7 @@ import android.widget.Toast;
 import com.andrewnitu.githubmarkdownviewer.R;
 import com.andrewnitu.githubmarkdownviewer.adapter.ClickListener;
 import com.andrewnitu.githubmarkdownviewer.adapter.FileListAdapter;
+import com.andrewnitu.githubmarkdownviewer.component.RecyclerViewEmptySupport;
 import com.andrewnitu.githubmarkdownviewer.model.db.RealmFile;
 import com.andrewnitu.githubmarkdownviewer.model.local.File;
 import com.android.volley.RequestQueue;
@@ -49,7 +49,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
     String reponame;
     String branchname;
 
-    private RecyclerView recyclerView;
+    private RecyclerViewEmptySupport recyclerView;
     private FileListAdapter adapter;
     private ArrayList<String> branches;
     private ArrayList<File> files;
@@ -101,7 +101,8 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         // Pull the list of branches to populate the spinner
         branchesRequest(username, reponame);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerViewEmptySupport) findViewById(R.id.recycler_view);
+        recyclerView.setEmptyView(findViewById(R.id.recyclerview_empty_text));
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
