@@ -171,9 +171,9 @@ public class MainActivity extends AppCompatActivity {
                         drawer.closeDrawers();
                         return true;
                     case R.id.nav_about:
-                        //startActivity(new Intent(MainActivity.this, AboutActivity.class));
-                        //drawer.closeDrawers();
-                        //return true;
+                        startActivity(new Intent(MainActivity.this, AboutActivity.class));
+                        drawer.closeDrawers();
+                        return true;
                     default:
                         navItemIndex = 0;
                 }
@@ -219,20 +219,5 @@ public class MainActivity extends AppCompatActivity {
 
     private void selectNavMenu() {
         navigationView.getMenu().getItem(navItemIndex).setChecked(true);
-    }
-
-    @Override // from TODO
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.nav_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

@@ -8,12 +8,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
 import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.andrewnitu.githubmarkdownviewer.R;
-import com.andrewnitu.githubmarkdownviewer.adapter.ClickListener;
 import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -77,7 +75,6 @@ public class ViewActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         webView.loadDataWithBaseURL("", response, mimeType, encoding, "");
-                        findViewById(R.id.loading_panel).setVisibility(View.GONE);
                     }
                 },
                 new Response.ErrorListener() {

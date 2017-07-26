@@ -63,8 +63,6 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_repo);
 
-        findViewById(R.id.loading_panel).setVisibility(View.GONE);
-
         // Get our Realm instance to write to
         realmInstance = Realm.getDefaultInstance();
 
@@ -193,8 +191,6 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
 
         branchname = parent.getItemAtPosition(position).toString();
 
-        findViewById(R.id.loading_panel).setVisibility(View.VISIBLE);
-
         filesListRequest(username, reponame, branchname);
     }
 
@@ -298,8 +294,6 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
 
                         // Update the RecyclerView (don't wait for the user to)
                         adapter.notifyDataSetChanged();
-
-                        findViewById(R.id.loading_panel).setVisibility(View.GONE);
                     }
                 },
                 new Response.ErrorListener() {

@@ -19,10 +19,6 @@ import java.util.ArrayList;
 public class FavoritesFragment extends Fragment {
     View rootView;
 
-    public FavoritesFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

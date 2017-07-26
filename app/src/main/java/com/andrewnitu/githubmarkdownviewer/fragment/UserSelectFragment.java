@@ -69,8 +69,6 @@ public class UserSelectFragment extends Fragment implements ClickListener {
         // Get our Realm instance
         realmInstance = Realm.getDefaultInstance();
 
-        rootView.findViewById(R.id.loading_panel).setVisibility(View.GONE);
-
         // Initialize empty Repo array which will be loaded into
         repos = new ArrayList<Repo>();
 
@@ -138,8 +136,6 @@ public class UserSelectFragment extends Fragment implements ClickListener {
                         } catch (JSONException e) {
                         }
 
-                        rootView.findViewById(R.id.loading_panel).setVisibility(View.GONE);
-
                         // Update the RecyclerView (don't wait for the user to)
                         adapter.notifyDataSetChanged();
                     }
@@ -147,8 +143,6 @@ public class UserSelectFragment extends Fragment implements ClickListener {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        rootView.findViewById(R.id.loading_panel).setVisibility(View.GONE);
-
                         // Give an error!
                         Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Couldn't find that user!", Toast.LENGTH_LONG);
                         toast.show();
@@ -167,8 +161,6 @@ public class UserSelectFragment extends Fragment implements ClickListener {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
-
-        rootView.findViewById(R.id.loading_panel).setVisibility(View.VISIBLE);
 
         repoRequest(usernameBox.getText().toString());
     }
