@@ -23,6 +23,9 @@
             android:name=".activity.ViewActivity"
             android:parentActivityName=".activity.RepoActivity" />
         <activity
+            android:name=".activity.AboutActivity"
+            android:parentActivityName=".activity.RepoActivity" />
+        <activity
             android:name=".activity.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
