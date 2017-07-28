@@ -1,46 +1,24 @@
 package com.andrewnitu.githubmarkdownviewer.activity;
 
-/**
- * Created by Andrew Nitu on 6/8/2017.
- */
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.andrewnitu.githubmarkdownviewer.R;
-import com.andrewnitu.githubmarkdownviewer.adapter.RepoListAdapter;
-import com.andrewnitu.githubmarkdownviewer.adapter.TouchListener;
-import com.andrewnitu.githubmarkdownviewer.model.Repo;
 import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ViewActivity extends AppCompatActivity implements TouchListener {
+public class ViewActivity extends AppCompatActivity {
     final String baseUrl = "https://api.github.com";
     final String mimeType = "text/html";
     final String encoding = "UTF-8";
@@ -93,7 +71,6 @@ public class ViewActivity extends AppCompatActivity implements TouchListener {
                     @Override
                     public void onResponse(String response) {
                         webView.loadDataWithBaseURL("", response, mimeType, encoding, "");
-                        findViewById(R.id.loading_panel).setVisibility(View.GONE);
                     }
                 },
                 new Response.ErrorListener() {
@@ -106,7 +83,7 @@ public class ViewActivity extends AppCompatActivity implements TouchListener {
         ) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<>();
                 params.put("Accept", "application/vnd.github.VERSION.html");
 
                 return params;
@@ -115,10 +92,5 @@ public class ViewActivity extends AppCompatActivity implements TouchListener {
 
         // Add the request to the RequestQueue
         queue.add(stringRequest);
-    }
-
-    @Override
-    public void itemClicked(View view, int index) {
-
     }
 }

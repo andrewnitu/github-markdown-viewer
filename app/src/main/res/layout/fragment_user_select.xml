@@ -36,7 +36,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp" />
 
-    <android.support.v7.widget.RecyclerView
+    <com.andrewnitu.githubmarkdownviewer.component.RecyclerViewEmptyFirstLoadSupport
         android:id="@+id/recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -48,15 +48,12 @@
         app:layout_constraintHorizontal_bias="0.0"
         android:layout_marginBottom="0dp" />
 
-    <RelativeLayout
-        android:id="@+id/loading_panel"
+    <TextView
+        android:textSize="20sp"
+        android:id="@+id/recyclerview_empty_text"
+        app:layout_constraintTop_toBottomOf="@+id/edit_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center" >
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:indeterminate="true" />
-    </RelativeLayout>
+        android:gravity="center"
+        android:text="@string/repo_list_empty"/>
 </android.support.constraint.ConstraintLayout>

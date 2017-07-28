@@ -5,31 +5,27 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.method.Touch;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.andrewnitu.githubmarkdownviewer.R;
+import com.andrewnitu.githubmarkdownviewer.adapter.ClickListener;
 import com.andrewnitu.githubmarkdownviewer.adapter.FileListAdapter;
-import com.andrewnitu.githubmarkdownviewer.adapter.RepoListAdapter;
-import com.andrewnitu.githubmarkdownviewer.adapter.TouchListener;
-import com.andrewnitu.githubmarkdownviewer.model.Branch;
-import com.andrewnitu.githubmarkdownviewer.model.File;
-import com.andrewnitu.githubmarkdownviewer.model.Repo;
+import com.andrewnitu.githubmarkdownviewer.component.RecyclerViewEmptySupport;
+import com.andrewnitu.githubmarkdownviewer.model.db.RealmFile;
+import com.andrewnitu.githubmarkdownviewer.model.local.File;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
@@ -38,8 +34,13 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.UUID;
 
-public class RepoActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, TouchListener {
+import io.realm.Realm;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
+
+public class RepoActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, ClickListener {
     final String baseUrl = "https://api.github.com";
 
     TextView usernameText;
@@ -48,23 +49,27 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
     String reponame;
     String branchname;
 
-    private RecyclerView recyclerView;
     private FileListAdapter adapter;
     private ArrayList<String> branches;
     private ArrayList<File> files;
     private ArrayAdapter<String> dataAdapter;
-    private Spinner branchPicker;
+
+    private Realm realmInstance;
 
     @Override // from AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_repo);
 
-        findViewById(R.id.loading_panel).setVisibility(View.GONE);
+        RecyclerViewEmptySupport recyclerView;
+        Spinner branchPicker;
+
+        // Get our Realm instance to write to
+        realmInstance = Realm.getDefaultInstance();
 
         // Initialize the ArrayList
-        branches = new ArrayList<String>();
-        files = new ArrayList<File>();
+        branches = new ArrayList<>();
+        files = new ArrayList<>();
 
         // Bind the text fields
         usernameText = (TextView) findViewById(R.id.username);
@@ -84,7 +89,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         reponameText.setText(reponame);
 
         // Initialize the adapter for the spinner
-        dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, branches);
+        dataAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, branches);
 
         // Drop down layout style - list view with radio button
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -95,7 +100,8 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         // Pull the list of branches to populate the spinner
         branchesRequest(username, reponame);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerViewEmptySupport) findViewById(R.id.recycler_view);
+        recyclerView.setEmptyView(findViewById(R.id.recyclerview_empty_text));
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -109,13 +115,13 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         adapter = new FileListAdapter(files);
         recyclerView.setAdapter(adapter);
 
-        adapter.setTouchListener(this);
+        adapter.setClickListener(this);
     }
 
     @Override // from AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         // Magic from StackOverflow
-        switch ( item.getItemId() ) {
+        switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 return true;
@@ -123,26 +129,68 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         return super.onOptionsItemSelected(item);
     }
 
-    @Override // from TouchListener
-    public void itemClicked(View view, int index) {
+    @Override // from ClickListener
+    public void onRowClicked(View view, int index) {
         Intent intent = new Intent(this, ViewActivity.class);
 
         // Attach the username, reponame, and file path within that repo to the intent
-        intent.putExtra("Username", username);
-        intent.putExtra("Reponame", reponame);
-        intent.putExtra("Branchname", branchname);
         intent.putExtra("Filepath", files.get(index).getPath());
+        intent.putExtra("Username", files.get(index).getOwnerUserName());
+        intent.putExtra("Reponame", files.get(index).getRepoName());
+        intent.putExtra("Branchname", files.get(index).getBranchName());
 
         // Start the intent
         startActivity(intent);
     }
 
+    @Override // from ClickListener
+    public void onFavouriteClicked(View view, int index) {
+        RealmQuery<RealmFile> fileQuery = realmInstance.where(RealmFile.class).equalTo("ownerUserName", files.get(index).getOwnerUserName())
+                .equalTo("repoName", files.get(index).getRepoName()).equalTo("path", files.get(index).getPath()).equalTo("branchName", files.get(index).getBranchName());
+
+        RealmResults<RealmFile> fileResults = fileQuery.findAll();
+
+        int numResults = fileResults.size();
+
+        realmInstance.beginTransaction();
+        if (numResults == 0) {
+            Log.d("Realm Transaction", "Added Repo object");
+            RealmFile file = realmInstance.createObject(RealmFile.class, UUID.randomUUID().toString());
+            file.setOwnerUserName(files.get(index).getOwnerUserName());
+            file.setRepoName(files.get(index).getRepoName());
+            file.setPath(files.get(index).getPath());
+            file.setBranchName(files.get(index).getBranchName());
+            switchFavouritesIcon(true, view);
+        } else {
+            Log.d("Realm Transaction", "Removed Repo object");
+            fileResults.first().deleteFromRealm();
+            switchFavouritesIcon(false, view);
+        }
+        realmInstance.commitTransaction();
+    }
+
+    public void switchFavouritesIcon(boolean state, View view) {
+        ImageView icon = (ImageView) view.findViewById(R.id.favourite_icon);
+        if (state) {
+            icon.setImageResource(R.drawable.ic_star_filled);
+        } else {
+            icon.setImageResource(R.drawable.ic_star_empty);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        realmInstance.close();
+    }
+
     @Override // from AdapterView.OnItemSelectedListener
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         // On selecting a spinner item
-        branchname = parent.getItemAtPosition(position).toString();
 
-        findViewById(R.id.loading_panel).setVisibility(View.VISIBLE);
+        files.clear();
+
+        branchname = parent.getItemAtPosition(position).toString();
 
         filesListRequest(username, reponame, branchname);
     }
@@ -169,7 +217,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
                         try {
                             int numExtracted = 0;
 
-                            // For each repo
+                            // For each branch
                             while (numExtracted < response.length()) {
                                 // Retrieve the name
                                 String branchName = response.getJSONObject(numExtracted).getString("name");
@@ -178,8 +226,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
                                 // if it IS master remember that master exists and don't add it
                                 if (branchName.equals("master")) {
                                     hasMaster = true;
-                                }
-                                else {
+                                } else {
                                     branches.add(branchName);
                                 }
                                 numExtracted++;
@@ -214,8 +261,8 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         // Instantiate the RequestQueue
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        // Create the URL to request the repositories for a user
-        String requestURL = baseUrl + "/repos/" + reqUserName + "/" + reqRepoName + "/git/trees/" + reqBranchName + "?recursive=1";
+        // Create the URL to request all files in a user's repo under a branch
+        final String requestURL = baseUrl + "/repos/" + reqUserName + "/" + reqRepoName + "/git/trees/" + reqBranchName + "?recursive=1";
 
         // Request a string response from the provided URL
         JsonObjectRequest stringRequest = new JsonObjectRequest(requestURL, null,
@@ -230,29 +277,28 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
 
                             // For each file
                             while (numExtracted < tree.length()) {
-                                // Retrieve the name
-                                String path = tree.getJSONObject(numExtracted).getString("path");
+                                if (tree.getJSONObject(numExtracted).has("url")) {
+                                    // Retrieve the name
+                                    String path = tree.getJSONObject(numExtracted).getString("path");
 
-                                // Add a new file to the list with the appropriate parameters
-                                // TODO Finalize these parameters
-                                files.add(new File(path, path));
+                                    // Add a new file to the list with the appropriate parameters
+                                    files.add(new File(reqUserName, reqRepoName, reqBranchName, path));
+                                }
 
                                 numExtracted++;
                             }
                         } catch (JSONException e) {
+                            Log.e("JSON Parse Error", "Error parsing file JSON!");
                         }
 
                         // Update the RecyclerView (don't wait for the user to)
                         adapter.notifyDataSetChanged();
-
-                        findViewById(R.id.loading_panel).setVisibility(View.GONE);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast toast = Toast.makeText(getApplicationContext(), "Couldn't find branches!", Toast.LENGTH_LONG);
-                        toast.show();
+                        Log.e("API Fetch Error", "Error fetching list of files!");
                     }
                 });
 
