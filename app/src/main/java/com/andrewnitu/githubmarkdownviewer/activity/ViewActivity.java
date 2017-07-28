@@ -1,9 +1,5 @@
 package com.andrewnitu.githubmarkdownviewer.activity;
 
-/**
- * Created by Andrew Nitu on 6/8/2017.
- */
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -87,7 +83,7 @@ public class ViewActivity extends AppCompatActivity {
         ) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<>();
                 params.put("Accept", "application/vnd.github.VERSION.html");
 
                 return params;

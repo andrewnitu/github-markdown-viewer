@@ -3,7 +3,6 @@ package com.andrewnitu.githubmarkdownviewer.fragment.favorites;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
@@ -29,11 +28,9 @@ import io.realm.RealmResults;
 
 public class FavoritesRepoFragment extends Fragment implements ClickListener {
     View rootView;
-    ActionBar savedActivityToolbar;
 
     private Realm realmInstance;
 
-    private RecyclerViewEmptySupport recyclerView;
     private ArrayList<Repo> repos;
     private RepoListFavoritesAdapter adapter;
 
@@ -51,6 +48,8 @@ public class FavoritesRepoFragment extends Fragment implements ClickListener {
         setRetainInstance(true);
         rootView = inflater.inflate(R.layout.fragment_repo_favorites, container, false);
 
+        RecyclerViewEmptySupport recyclerView;
+
         // Get our Realm instance
         realmInstance = Realm.getDefaultInstance();
 
@@ -58,7 +57,7 @@ public class FavoritesRepoFragment extends Fragment implements ClickListener {
 
         RealmResults<RealmRepo> allRepoResults = allRepoQuery.findAll();
 
-        repos = new ArrayList<Repo>();
+        repos = new ArrayList<>();
 
         for (int i = 0; i < allRepoResults.size(); i++) {
             repos.add(new Repo(allRepoResults.get(i).getName(), allRepoResults.get(i).getOwnerUserName()));

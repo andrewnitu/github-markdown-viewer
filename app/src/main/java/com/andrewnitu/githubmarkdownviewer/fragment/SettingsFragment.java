@@ -12,10 +12,6 @@ import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
-/**
- * Created by Andrew Nitu on 6/22/2017.
- */
-
 public class SettingsFragment extends PreferenceFragment {
     Preference deleteRepos;
     Preference deleteFiles;

@@ -49,12 +49,10 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
     String reponame;
     String branchname;
 
-    private RecyclerViewEmptySupport recyclerView;
     private FileListAdapter adapter;
     private ArrayList<String> branches;
     private ArrayList<File> files;
     private ArrayAdapter<String> dataAdapter;
-    private Spinner branchPicker;
 
     private Realm realmInstance;
 
@@ -63,12 +61,15 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_repo);
 
+        RecyclerViewEmptySupport recyclerView;
+        Spinner branchPicker;
+
         // Get our Realm instance to write to
         realmInstance = Realm.getDefaultInstance();
 
         // Initialize the ArrayList
-        branches = new ArrayList<String>();
-        files = new ArrayList<File>();
+        branches = new ArrayList<>();
+        files = new ArrayList<>();
 
         // Bind the text fields
         usernameText = (TextView) findViewById(R.id.username);
@@ -88,7 +89,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         reponameText.setText(reponame);
 
         // Initialize the adapter for the spinner
-        dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, branches);
+        dataAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, branches);
 
         // Drop down layout style - list view with radio button
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -279,11 +280,9 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
                                 if (tree.getJSONObject(numExtracted).has("url")) {
                                     // Retrieve the name
                                     String path = tree.getJSONObject(numExtracted).getString("path");
-                                    String branch = reqBranchName;
-                                    String url = tree.getJSONObject(numExtracted).getString("url");
 
                                     // Add a new file to the list with the appropriate parameters
-                                    files.add(new File(reqUserName, reqRepoName, branch, path));
+                                    files.add(new File(reqUserName, reqRepoName, reqBranchName, path));
                                 }
 
                                 numExtracted++;

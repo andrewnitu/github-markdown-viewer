@@ -16,10 +16,6 @@ import java.util.List;
 
 import io.realm.Realm;
 
-/**
- * Created by Andrew Nitu on 5/15/2017.
- */
-
 public class RepoListFavoritesAdapter extends RecyclerView.Adapter<RepoListFavoritesAdapter.RepoViewHolder> {
     private List<Repo> repos;
 

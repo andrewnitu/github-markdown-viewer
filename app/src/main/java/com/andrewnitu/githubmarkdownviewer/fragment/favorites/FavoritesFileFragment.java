@@ -3,7 +3,6 @@ package com.andrewnitu.githubmarkdownviewer.fragment.favorites;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
@@ -29,11 +28,10 @@ import io.realm.RealmResults;
 
 public class FavoritesFileFragment extends Fragment implements ClickListener {
     View rootView;
-    ActionBar savedActivityToolbar;
 
     private Realm realmInstance;
 
-    private RecyclerViewEmptySupport recyclerView;
+
     private ArrayList<File> files;
     private FileListFavoritesAdapter adapter;
 
@@ -51,6 +49,8 @@ public class FavoritesFileFragment extends Fragment implements ClickListener {
         setRetainInstance(true);
         rootView = inflater.inflate(R.layout.fragment_file_favorites, container, false);
 
+        RecyclerViewEmptySupport recyclerView;
+
         // Get our Realm instance
         realmInstance = Realm.getDefaultInstance();
 
@@ -58,7 +58,7 @@ public class FavoritesFileFragment extends Fragment implements ClickListener {
 
         RealmResults<RealmFile> allFileResults = allFileQuery.findAll();
 
-        files = new ArrayList<File>();
+        files = new ArrayList<>();
 
         for (int i = 0; i < allFileResults.size(); i++) {
             files.add(new File(allFileResults.get(i).getOwnerUserName(), allFileResults.get(i).getRepoName(), allFileResults.get(i).getBranchName(), allFileResults.get(i).getPath()));

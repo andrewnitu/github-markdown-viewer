@@ -43,11 +43,9 @@ public class UserSelectFragment extends Fragment implements ClickListener {
     final String baseUrl = "https://api.github.com";
 
     private EditText usernameBox;
-    private RecyclerViewEmptyFirstLoadSupport recyclerView;
     private ArrayList<Repo> repos;
     private RepoListAdapter adapter;
     private String username;
-    private View rootView;
 
     private Boolean firstSearch = true;
 
@@ -64,13 +62,18 @@ public class UserSelectFragment extends Fragment implements ClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        View rootView;
+
         rootView = inflater.inflate(R.layout.fragment_user_select, container, false);
+
+        RecyclerViewEmptyFirstLoadSupport recyclerView;
 
         // Get our Realm instance
         realmInstance = Realm.getDefaultInstance();
 
         // Initialize empty Repo array which will be loaded into
-        repos = new ArrayList<Repo>();
+        repos = new ArrayList<>();
 
         // Bind our UI elements
         usernameBox = (EditText) rootView.findViewById(R.id.edit_text);

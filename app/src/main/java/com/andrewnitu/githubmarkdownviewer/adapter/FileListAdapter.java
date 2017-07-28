@@ -15,10 +15,6 @@ import java.util.List;
 
 import io.realm.Realm;
 
-/**
- * Created by Andrew Nitu on 5/15/2017.
- */
-
 public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.BranchViewHolder> {
     private List<File> files;
 

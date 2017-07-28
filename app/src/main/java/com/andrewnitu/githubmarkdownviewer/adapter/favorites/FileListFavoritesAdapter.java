@@ -1,4 +1,4 @@
-package com.andrewnitu.githubmarkdownviewer.adapter;
+package com.andrewnitu.githubmarkdownviewer.adapter.favorites;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,18 +8,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.andrewnitu.githubmarkdownviewer.R;
+import com.andrewnitu.githubmarkdownviewer.adapter.ClickListener;
 import com.andrewnitu.githubmarkdownviewer.model.db.RealmFile;
 import com.andrewnitu.githubmarkdownviewer.model.local.File;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
 import io.realm.Realm;
-
-/**
- * Created by Andrew Nitu on 5/15/2017.
- */
 
 public class FileListFavoritesAdapter extends RecyclerView.Adapter<FileListFavoritesAdapter.FileViewHolder> {
     private List<File> files;

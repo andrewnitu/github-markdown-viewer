@@ -45,8 +45,8 @@ public class FavoritesFragment extends Fragment {
     }
 
     public class FavoritesTabAdapter extends FragmentPagerAdapter {
-        private ArrayList<Fragment> fragmentList = new ArrayList<Fragment>();
-        private ArrayList<String> titleList = new ArrayList<String>();
+        private ArrayList<Fragment> fragmentList = new ArrayList<>();
+        private ArrayList<String> titleList = new ArrayList<>();
 
         public FavoritesTabAdapter(FragmentManager manager) {
             super(manager);

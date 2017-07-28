@@ -3,10 +3,9 @@ package com.andrewnitu.githubmarkdownviewer.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -14,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.andrewnitu.githubmarkdownviewer.R;
 import com.andrewnitu.githubmarkdownviewer.fragment.FavoritesFragment;
@@ -137,10 +137,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        // If mPendingRunnable is not null, then add to the message queue
-        if (mPendingRunnable != null) {
-            handler.post(mPendingRunnable);
-        }
+        handler.post(mPendingRunnable);
 
         //Closing drawer on item click
         drawer.closeDrawers();
@@ -193,28 +190,28 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
-            @Override // from TODO
+            @Override
             public void onDrawerClosed(View drawerView) {
-                // Code here will be triggered once the drawer closes as we don't want anything to happen so we leave this blank
                 super.onDrawerClosed(drawerView);
             }
 
-            @Override // from TODO
+            @Override
             public void onDrawerOpened(View drawerView) {
-                // Code here will be triggered once the drawer open as we don't want anything to happen so we leave this blank
                 super.onDrawerOpened(drawerView);
             }
         };
 
         //Setting the actionbarToggle to drawer layout
-        drawer.setDrawerListener(actionBarDrawerToggle);
+        drawer.addDrawerListener(actionBarDrawerToggle);
 
         //calling sync state is necessary or else your hamburger icon won't show up
         actionBarDrawerToggle.syncState();
     }
 
     private void setToolbarTitle() {
-        getSupportActionBar().setTitle(sectionToolbarTitles[navItemIndex]);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(sectionToolbarTitles[navItemIndex]);
+        }
     }
 
     private void selectNavMenu() {
