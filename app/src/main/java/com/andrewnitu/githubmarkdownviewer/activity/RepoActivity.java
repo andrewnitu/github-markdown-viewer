@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.andrewnitu.githubmarkdownviewer.R;
 import com.andrewnitu.githubmarkdownviewer.adapter.ClickListener;
 import com.andrewnitu.githubmarkdownviewer.adapter.FileListAdapter;
-import com.andrewnitu.githubmarkdownviewer.component.RecyclerViewEmptySupport;
+import com.andrewnitu.githubmarkdownviewer.component.RecyclerViewEmptyFirstLoadSupport;
 import com.andrewnitu.githubmarkdownviewer.model.db.RealmFile;
 import com.andrewnitu.githubmarkdownviewer.model.local.File;
 import com.android.volley.RequestQueue;
@@ -61,7 +61,7 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_repo);
 
-        RecyclerViewEmptySupport recyclerView;
+        RecyclerViewEmptyFirstLoadSupport recyclerView;
         Spinner branchPicker;
 
         // Get our Realm instance to write to
@@ -100,7 +100,13 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         // Pull the list of branches to populate the spinner
         branchesRequest(username, reponame);
 
-        recyclerView = (RecyclerViewEmptySupport) findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerViewEmptyFirstLoadSupport) findViewById(R.id.recycler_view);
+
+        adapter = new FileListAdapter(files);
+        recyclerView.setAdapter(adapter);
+
+        adapter.setClickListener(this);
+
         recyclerView.setEmptyView(findViewById(R.id.recyclerview_empty_text));
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -111,11 +117,6 @@ public class RepoActivity extends AppCompatActivity implements AdapterView.OnIte
         DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 llm.getOrientation());
         recyclerView.addItemDecoration(mDividerItemDecoration);
-
-        adapter = new FileListAdapter(files);
-        recyclerView.setAdapter(adapter);
-
-        adapter.setClickListener(this);
     }
 
     @Override // from AppCompatActivity
