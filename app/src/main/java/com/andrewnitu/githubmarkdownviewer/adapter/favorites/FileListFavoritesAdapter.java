@@ -42,8 +42,8 @@ public class FileListFavoritesAdapter extends RecyclerView.Adapter<FileListFavor
 
     @Override
     public void onBindViewHolder(FileViewHolder fvh, int i) {
-        fvh.fileTitleAndBranch.setText(files.get(i).getPath() + " - " + files.get(i).getBranchName());
-        fvh.fileRepoAndOwnerUserName.setText(files.get(i).getRepoName() + " - " + files.get(i).getOwnerUserName());
+        fvh.fileTitleAndBranch.setText(files.get(i).getBranchName() + " - " + files.get(i).getPath());
+        fvh.fileRepoAndOwnerUserName.setText(files.get(i).getOwnerUserName() + " - " + files.get(i).getRepoName());
 
         if (realmInstance.where(RealmFile.class).equalTo("ownerUserName", files.get(i).getOwnerUserName())
                 .equalTo("repoName", files.get(i).getRepoName()).equalTo("path", files.get(i).getPath()).equalTo("branchName", files.get(i).getBranchName()).findFirst() != null) {
