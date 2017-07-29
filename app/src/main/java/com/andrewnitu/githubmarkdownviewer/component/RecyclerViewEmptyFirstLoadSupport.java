@@ -15,12 +15,12 @@ public class RecyclerViewEmptyFirstLoadSupport extends RecyclerView {
             Adapter<?> adapter = getAdapter();
             if (adapter != null && emptyView != null) {
                 if (adapter.getItemCount() == 0 && !firstLoad) {
-                    firstLoad = true;
                     emptyView.setVisibility(View.VISIBLE);
                     RecyclerViewEmptyFirstLoadSupport.this.setVisibility(View.GONE);
                 } else {
                     emptyView.setVisibility(View.GONE);
                     RecyclerViewEmptyFirstLoadSupport.this.setVisibility(View.VISIBLE);
+                    firstLoad = false;
                 }
             }
         }
