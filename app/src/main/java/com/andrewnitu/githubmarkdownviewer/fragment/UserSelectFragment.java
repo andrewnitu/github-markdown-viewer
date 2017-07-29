@@ -78,6 +78,12 @@ public class UserSelectFragment extends Fragment implements ClickListener {
         // Bind our UI elements
         usernameBox = (EditText) rootView.findViewById(R.id.edit_text);
         recyclerView = (RecyclerViewEmptyFirstLoadSupport) rootView.findViewById(R.id.recycler_view);
+
+        // Give our RecyclerView an adapter
+        adapter = new RepoListAdapter(repos);
+        recyclerView.setAdapter(adapter);
+        adapter.setClickListener(this);
+
         recyclerView.setEmptyView(rootView.findViewById(R.id.recyclerview_empty_text));
 
         // Set up our submit button
@@ -97,12 +103,6 @@ public class UserSelectFragment extends Fragment implements ClickListener {
         DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 llm.getOrientation());
         recyclerView.addItemDecoration(mDividerItemDecoration);
-
-        // Give our RecyclerView an adapter
-        adapter = new RepoListAdapter(repos);
-        recyclerView.setAdapter(adapter);
-
-        adapter.setClickListener(this);
 
         return rootView;
     }

@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import com.andrewnitu.githubmarkdownviewer.R;
 import com.andrewnitu.githubmarkdownviewer.activity.ViewActivity;
 import com.andrewnitu.githubmarkdownviewer.adapter.ClickListener;
-import com.andrewnitu.githubmarkdownviewer.adapter.FileListFavoritesAdapter;
+import com.andrewnitu.githubmarkdownviewer.adapter.favorites.FileListFavoritesAdapter;
 import com.andrewnitu.githubmarkdownviewer.component.RecyclerViewEmptySupport;
 import com.andrewnitu.githubmarkdownviewer.model.db.RealmFile;
 import com.andrewnitu.githubmarkdownviewer.model.local.File;
@@ -66,6 +66,13 @@ public class FavoritesFileFragment extends Fragment implements ClickListener {
 
         // Bind our UI elements
         recyclerView = (RecyclerViewEmptySupport) rootView.findViewById(R.id.recycler_view);
+
+        // Give our RecyclerView an adapter
+        adapter = new FileListFavoritesAdapter(files);
+        recyclerView.setAdapter(adapter);
+
+        adapter.setClickListener(this);
+
         recyclerView.setEmptyView(rootView.findViewById(R.id.recyclerview_empty_text));
 
         LinearLayoutManager llm = new LinearLayoutManager(this.getContext());
@@ -76,12 +83,6 @@ public class FavoritesFileFragment extends Fragment implements ClickListener {
         DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 llm.getOrientation());
         recyclerView.addItemDecoration(mDividerItemDecoration);
-
-        // Give our RecyclerView an adapter
-        adapter = new FileListFavoritesAdapter(files);
-        recyclerView.setAdapter(adapter);
-
-        adapter.setClickListener(this);
 
         return rootView;
     }
