@@ -39,6 +39,8 @@ public class ViewActivity extends AppCompatActivity {
         filepath = intent.getStringExtra("Filepath");
         branchname = intent.getStringExtra("Branchname");
 
+        getSupportActionBar().setTitle(filepath);
+
         webView = (WebView) findViewById(R.id.web_view);
         //webView.getSettings().setLoadWithOverviewMode(true);
         //webView.getSettings().setUseWideViewPort(true);
