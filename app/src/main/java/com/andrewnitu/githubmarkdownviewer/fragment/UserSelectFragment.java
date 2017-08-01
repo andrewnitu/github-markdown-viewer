@@ -23,13 +23,15 @@ import com.andrewnitu.githubmarkdownviewer.adapter.RepoListAdapter;
 import com.andrewnitu.githubmarkdownviewer.component.RecyclerViewEmptyFirstLoadSupport;
 import com.andrewnitu.githubmarkdownviewer.model.db.RealmRepo;
 import com.andrewnitu.githubmarkdownviewer.model.local.Repo;
+import com.andrewnitu.githubmarkdownviewer.utility.ExtractIntFromEnd;
+import com.andrewnitu.githubmarkdownviewer.utility.PaginationLinks;
 import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -37,8 +39,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.UUID;
 
 import io.realm.Realm;
@@ -113,20 +116,95 @@ public class UserSelectFragment extends Fragment implements ClickListener {
     }
 
     public void repoRequest(final String reqUsername) {
+        int firstPage;
+        int lastPage;
+
         // Instantiate the RequestQueue
-        RequestQueue queue = Volley.newRequestQueue(getContext());
+        final RequestQueue queue = Volley.newRequestQueue(getContext());
 
         // Create the URL to request the repositories for a user
-        String requestURL = baseUrl + "/users/" + reqUsername + "/repos";
+        final String requestUrl = baseUrl + "/users/" + reqUsername + "/repos";
 
-        JsonObjectRequest headersRequest = new JsonObjectRequest(Request.Method.GET, requestURL, null,
+        // TODO needs heavy reworking, works but likely horribly inefficient
+        JsonObjectRequest headersRequest = new JsonObjectRequest(Request.Method.GET, requestUrl, null,
                 new Response.Listener<JSONObject>() {
                     // Do on a successful request
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            String linkHeader = response.getString("link");
+                            int firstPage;
+                            int lastPage;
+
+                            firstPage = 1;
+
+                            if (response.has("Link")) {
+                                String linkHeader = response.getString("Link");
+                                PaginationLinks paginationLinks = new PaginationLinks(linkHeader);
+                                lastPage = ExtractIntFromEnd.extractEndInt(paginationLinks.getLast());
+                            }
+                            else {
+                                lastPage = 1;
+                            }
+
+                            JsonArrayRequest arrayRequest;
+                            String requestUrlString = requestUrl;
+
+                            for (int i = firstPage; i <= lastPage; i++) {
+                                requestUrlString = requestUrl + "?page=" + i + "&per_page=100";
+
+                                arrayRequest = new JsonArrayRequest(requestUrlString,
+                                        new Response.Listener<JSONArray>() {
+                                            // Do on a successful request
+                                            @Override
+                                            public void onResponse(JSONArray response) {
+                                                // If successful, clear the current repo list to make way for the new one
+                                                username = reqUsername;
+
+                                                try {
+                                                    int numExtracted = 0;
+
+                                                    // For each repo
+                                                    while (numExtracted < response.length()) {
+                                                        // Retrieve the repository name
+                                                        String repoName = response.getJSONObject(numExtracted).getString("name");
+
+                                                        // TODO: Add the URL property
+                                                        repos.add(new Repo(repoName, reqUsername));
+                                                        numExtracted++;
+                                                    }
+                                                } catch (JSONException e) {
+                                                    Log.e("Debug", "Error parsing files response JSON");
+                                                }
+
+                                                // Update the RecyclerView (don't wait for the user to)
+                                                adapter.notifyDataSetChanged();
+                                            }
+                                        },
+                                        new Response.ErrorListener() {
+                                            @Override
+                                            public void onErrorResponse(VolleyError error) {
+                                                // Give an error!
+                                                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Couldn't find that user!", Toast.LENGTH_LONG);
+                                                toast.show();
+
+                                                usernameBox.setText("");
+                                            }
+                                        });
+
+                                queue.add(arrayRequest);
+
+                                if (i == lastPage) {
+                                    Collections.sort(repos, new Comparator<Repo>() {
+                                        @Override
+                                        public int compare(Repo o1, Repo o2) {
+                                            return o1.getName().compareToIgnoreCase(o2.getName());
+                                        }
+                                    });
+                                }
+                            }
+
                         } catch (JSONException e) {
+                            Log.e("test", "some kinda fail");
                         }
                     }
                 },
@@ -142,83 +220,13 @@ public class UserSelectFragment extends Fragment implements ClickListener {
                 }) {
             @Override
             protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
-                try {
-                    String jsonString = new String(response.data,
-                            HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
-                    JSONObject jsonResponse = new JSONObject(jsonString);
-                    return Response.success(jsonResponse,
-                            HttpHeaderParser.parseCacheHeaders(response));
-                } catch (UnsupportedEncodingException e) {
-                    return Response.error(new ParseError(e));
-                } catch (JSONException je) {
-                    return Response.error(new ParseError(je));
-                }
+                JSONObject jsonResponse = new JSONObject(response.headers);
+                return Response.success(jsonResponse,
+                        HttpHeaderParser.parseCacheHeaders(response));
             }
         };
 
-        // Request a string response from the provided URL
-        JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, requestURL, null,
-                new Response.Listener<JSONObject>() {
-                    // Do on a successful request
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // If successful, clear the current repo list to make way for the new one
-                        repos.clear();
-                        username = reqUsername;
-
-                        try {
-                            Log.e("test", response.toString(4));
-
-                            int numExtracted = 0;
-
-                            // For each repo
-                            while (numExtracted < response.getJSONArray("data").length()) {
-                                // Retrieve the repository name
-                                String repoName = response.getJSONArray("data").getJSONObject(numExtracted).getString("name");
-
-                                // TODO: Add the URL property
-                                repos.add(new Repo(repoName, reqUsername));
-                                numExtracted++;
-                            }
-                        } catch (JSONException e) {
-                            Log.e("Debug", "Error parsing files response JSON");
-                        }
-
-                        // Update the RecyclerView (don't wait for the user to)
-                        adapter.notifyDataSetChanged();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Give an error!
-                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Couldn't find that user!", Toast.LENGTH_LONG);
-                        toast.show();
-
-                        usernameBox.setText("");
-                    }
-                }) {
-            @Override
-            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
-                try {
-                    String jsonString = new String(response.data,
-                            HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
-                    JSONArray jsonFiles = new JSONArray(jsonString);
-                    JSONObject jsonResponse = new JSONObject();
-                    jsonResponse.put("data", jsonFiles);
-                    jsonResponse.put("headers", new JSONObject(response.headers));
-                    return Response.success(jsonResponse,
-                            HttpHeaderParser.parseCacheHeaders(response));
-                } catch (UnsupportedEncodingException e) {
-                    return Response.error(new ParseError(e));
-                } catch (JSONException je) {
-                    return Response.error(new ParseError(je));
-                }
-            }
-        };
-
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+        queue.add(headersRequest);
     }
 
     public void retrieveRepos(View view) {
