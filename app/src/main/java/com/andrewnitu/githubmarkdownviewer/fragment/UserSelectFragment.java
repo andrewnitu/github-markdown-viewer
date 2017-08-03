@@ -172,6 +172,13 @@ public class UserSelectFragment extends Fragment implements ClickListener {
                                                         repos.add(new Repo(repoName, reqUsername));
                                                         numExtracted++;
                                                     }
+
+                                                    Collections.sort(repos, new Comparator<Repo>() {
+                                                        @Override
+                                                        public int compare(Repo o1, Repo o2) {
+                                                            return o1.getName().compareToIgnoreCase(o2.getName());
+                                                        }
+                                                    });
                                                 } catch (JSONException e) {
                                                     Log.e("Debug", "Error parsing files response JSON");
                                                 }
@@ -192,15 +199,6 @@ public class UserSelectFragment extends Fragment implements ClickListener {
                                         });
 
                                 queue.add(arrayRequest);
-
-                                if (i == lastPage) {
-                                    Collections.sort(repos, new Comparator<Repo>() {
-                                        @Override
-                                        public int compare(Repo o1, Repo o2) {
-                                            return o1.getName().compareToIgnoreCase(o2.getName());
-                                        }
-                                    });
-                                }
                             }
 
                         } catch (JSONException e) {
@@ -235,8 +233,10 @@ public class UserSelectFragment extends Fragment implements ClickListener {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
-
-        repoRequest(usernameBox.getText().toString());
+        if (!usernameBox.getText().toString().equals(username)) {
+            repos.clear();
+            repoRequest(usernameBox.getText().toString());
+        }
     }
 
     @Override
