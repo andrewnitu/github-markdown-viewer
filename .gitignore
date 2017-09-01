@@ -3,6 +3,9 @@
 *.apk
 *.ap_
 
+# Gradle properties (contains API keys)
+gradle.properties
+
 # Files for the Dalvik VM
 *.dex
 
