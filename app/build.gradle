@@ -8,13 +8,14 @@ android {
         applicationId "com.andrewnitu.githubmarkdownviewer"
         minSdkVersion 22
         targetSdkVersion 25
-        versionCode 1
+        versionCode 4
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     productFlavors {
@@ -31,5 +32,6 @@ dependencies {
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.volley:volley:1.0.0'
     compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.andrewnitu:easygithuboauth:1.0.0'
     testCompile 'junit:junit:4.12'
 }
